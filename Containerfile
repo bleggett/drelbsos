@@ -127,37 +127,29 @@ RUN --mount=type=cache,dst=/var/cache \
     --mount=type=tmpfs,dst=/tmp \
     dnf5 -y install \
         twitter-twemoji-fonts \
-        google-noto-sans-cjk-fonts \
         lato-fonts \
         fira-code-fonts \
         nerd-fonts \
         google-droid-sans-mono-fonts \
         python3-pip \
-        libadwaita \
         duperemove \
         sqlite \
         xwininfo \
         xrandr \
-        compsize \
-        ryzenadj \
         ddcutil \
         input-remapper \
         i2c-tools \
         lm_sensors \
-        fw-ectool \
-        fw-fanctrl \
         udica \
         python3-icoextract \
         webapp-manager \
         zsh \
         btop \
-        lshw \
         xdotool \
         wmctrl \
         libcec \
         yad \
         f3 \
-        pulseaudio-utils \
         lzip \
         p7zip \
         rar \
@@ -165,7 +157,6 @@ RUN --mount=type=cache,dst=/var/cache \
         vulkan-tools \
         xwiimote-ng \
         fastfetch \
-        vim \
         topgrade \
         ydotool \
         cdemu-daemon \
