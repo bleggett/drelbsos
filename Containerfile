@@ -273,9 +273,6 @@ ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-41}"
 ARG VERSION_TAG="${VERSION_TAG}"
 ARG VERSION_PRETTY="${VERSION_PRETTY}"
 
-# Fetch NVIDIA driver
-COPY system_files/nvidia/shared system_files/nvidia/${BASE_IMAGE_NAME} /
-
 # Install NVIDIA driver
 RUN --mount=type=cache,dst=/var/cache \
     --mount=type=cache,dst=/var/log \
