@@ -41,11 +41,12 @@ RUN --mount=type=cache,dst=/var/cache/libdnf5 \
     /ctx/unwrap && \
     dnf5 -y install dnf5-plugins && \
     for copr in \
-        kylegospo/bazzite \
+        bazzite-org/bazzite \
         ublue-os/staging \
-        kylegospo/LatencyFleX \
-        kylegospo/rom-properties \
-        kylegospo/webapp-manager \
+        bazzite-org/LatencyFleX \
+        bazzite-org/rom-properties \
+        bazzite-org/webapp-manager \
+        bazzite-org/vk_hdr_layer \
         hhd-dev/hhd \
         che/nerd-fonts \
         hikariknight/looking-glass-kvmfr \
@@ -71,30 +72,41 @@ RUN --mount=type=cache,dst=/var/cache/libdnf5 \
     /ctx/cleanup
 
 # Install kernel
-RUN --mount=type=cache,dst=/var/cache/libdnf5 \
-    --mount=type=cache,dst=/var/cache/rpm-ostree \
+RUN --mount=type=cache,dst=/var/cache \
+    --mount=type=cache,dst=/var/log \
     --mount=type=bind,from=akmods,src=/kernel-rpms,dst=/tmp/kernel-rpms \
     --mount=type=bind,from=akmods,src=/rpms,dst=/tmp/akmods-rpms \
     --mount=type=bind,from=akmods-extra,src=/rpms,dst=/tmp/akmods-extra-rpms \
     --mount=type=bind,from=ctx,source=/,target=/ctx \
     --mount=type=tmpfs,dst=/tmp \
     /ctx/install-kernel-akmods && \
+    for toswap in linux-firmware netronome-firmware libertas-firmware atheros-firmware realtek-firmware tiwilink-firmware cirrus-audio-firmware linux-firmware-whence iwlwifi-dvm-firmware iwlwifi-mvm-firmware amd-ucode-firmware qcom-firmware mt7xxx-firmware liquidio-firmware nxpwireless-firmware intel-vsc-firmware nvidia-gpu-firmware intel-audio-firmware amd-gpu-firmware iwlegacy-firmware intel-gpu-firmware mlxsw_spectrum-firmware qed-firmware mrvlprestera-firmware brcmfmac-firmware dvb-firmware; do \
+        dnf5 -y swap --repo copr:copr.fedorainfracloud.org:bazzite-org:bazzite $toswap $toswap; \
+    done && unset -v toswap && \
     dnf5 -y config-manager setopt "*rpmfusion*".enabled=0 && \
     dnf5 -y copr enable bieszczaders/kernel-cachyos-addons && \
     dnf5 -y install \
         scx-scheds && \
     dnf5 -y copr disable bieszczaders/kernel-cachyos-addons && \
     for toswap in rpm-ostree bootc; do \
-        dnf5 -y swap --repo copr:copr.fedorainfracloud.org:kylegospo:bazzite $toswap $toswap; \
+        dnf5 -y swap --repo copr:copr.fedorainfracloud.org:bazzite-org:bazzite $toswap $toswap; \
     done && unset -v toswap && \
+    /ctx/cleanup
+
+# Setup firmware
+RUN --mount=type=cache,dst=/var/cache \
+    --mount=type=cache,dst=/var/log \
+    --mount=type=bind,from=ctx,source=/,target=/ctx \
+    --mount=type=tmpfs,dst=/tmp \
+    /ctx/install-firmware && \
     /ctx/cleanup
 
 # Install codec stuff
 # Install patched fwupd
 # Install Valve's patched Mesa, Pipewire, Bluez, and Xwayland
 # Install patched switcheroo control with proper discrete GPU support
-RUN --mount=type=cache,dst=/var/cache/libdnf5 \
-    --mount=type=cache,dst=/var/cache/rpm-ostree \
+RUN --mount=type=cache,dst=/var/cache \
+    --mount=type=cache,dst=/var/log \
     --mount=type=bind,from=ctx,source=/,target=/ctx \
     --mount=type=tmpfs,dst=/tmp \
     dnf5 -y install --enable-repo="*rpmfusion*" --disable-repo="*fedora-multimedia*" \
@@ -105,8 +117,8 @@ RUN --mount=type=cache,dst=/var/cache/libdnf5 \
     /ctx/cleanup
 
 # Remove unneeded packages
-RUN --mount=type=cache,dst=/var/cache/libdnf5 \
-    --mount=type=cache,dst=/var/cache/rpm-ostree \
+RUN --mount=type=cache,dst=/var/cache \
+    --mount=type=cache,dst=/var/log \
     --mount=type=bind,from=ctx,source=/,target=/ctx \
     --mount=type=tmpfs,dst=/tmp \
     dnf5 -y remove \
@@ -117,8 +129,8 @@ RUN --mount=type=cache,dst=/var/cache/libdnf5 \
     /ctx/cleanup
 
 # Install new packages
-RUN --mount=type=cache,dst=/var/cache/libdnf5 \
-    --mount=type=cache,dst=/var/cache/rpm-ostree \
+RUN --mount=type=cache,dst=/var/cache \
+    --mount=type=cache,dst=/var/log \
     --mount=type=bind,from=ctx,source=/,target=/ctx \
     --mount=type=tmpfs,dst=/tmp \
     dnf5 -y install \
@@ -139,6 +151,9 @@ RUN --mount=type=cache,dst=/var/cache/libdnf5 \
         ddcutil \
         input-remapper \
         i2c-tools \
+        lm_sensors \
+        fw-ectool \
+        fw-fanctrl \
         udica \
         python3-icoextract \
         webapp-manager \
@@ -152,6 +167,7 @@ RUN --mount=type=cache,dst=/var/cache/libdnf5 \
         f3 \
         pulseaudio-utils \
         lzip \
+        p7zip \
         rar \
         libxcrypt-compat \
         vulkan-tools \
@@ -176,9 +192,9 @@ RUN --mount=type=cache,dst=/var/cache/libdnf5 \
         wlr-randr && \
     mkdir -p /etc/xdg/autostart && \
     sed -i 's/ --xdg-runtime=\\"${XDG_RUNTIME_DIR}\\"//g' /usr/bin/btrfs-assistant-launcher && \
-    curl -Lo /usr/bin/installcab https://raw.githubusercontent.com/KyleGospo/steam-proton-mf-wmv/master/installcab.py && \
+    curl -Lo /usr/bin/installcab https://raw.githubusercontent.com/bazzite-org/steam-proton-mf-wmv/master/installcab.py && \
     chmod +x /usr/bin/installcab && \
-    curl -Lo /usr/bin/install-mf-wmv https://github.com/KyleGospo/steam-proton-mf-wmv/blob/master/install-mf-wmv.sh && \
+    curl -Lo /usr/bin/install-mf-wmv https://github.com/bazzite-org/steam-proton-mf-wmv/blob/master/install-mf-wmv.sh && \
     chmod +x /usr/bin/install-mf-wmv && \
     curl -Lo /tmp/ls-iommu.tar.gz $(curl https://api.github.com/repos/HikariKnight/ls-iommu/releases/latest | jq -r '.assets[] | select(.name| test(".*x86_64.tar.gz$")).browser_download_url') && \
     mkdir -p /tmp/ls-iommu && \
@@ -188,12 +204,12 @@ RUN --mount=type=cache,dst=/var/cache/libdnf5 \
     /ctx/cleanup
 
 # Configure GNOME overrides
-RUN --mount=type=cache,dst=/var/cache/libdnf5 \
-    --mount=type=cache,dst=/var/cache/rpm-ostree \
+RUN --mount=type=cache,dst=/var/cache \
+    --mount=type=cache,dst=/var/log \
     --mount=type=bind,from=ctx,source=/,target=/ctx \
     --mount=type=tmpfs,dst=/tmp \
     dnf5 -y install \
- 	    nautilus-gsconnect \
+ 	nautilus-gsconnect \
         gnome-randr-rust \
         gnome-shell-extension-appindicator \
         gnome-shell-extension-user-theme \
@@ -205,8 +221,8 @@ RUN --mount=type=cache,dst=/var/cache/libdnf5 \
 
 # Cleanup & Finalize
 COPY system_files/overrides /
-RUN --mount=type=cache,dst=/var/cache/libdnf5 \
-    --mount=type=cache,dst=/var/cache/rpm-ostree \
+RUN --mount=type=cache,dst=/var/cache \
+    --mount=type=cache,dst=/var/log \
     --mount=type=bind,from=ctx,source=/,target=/ctx \
     --mount=type=tmpfs,dst=/tmp \
     rm -f /etc/profile.d/toolbox.sh && \
@@ -223,11 +239,11 @@ RUN --mount=type=cache,dst=/var/cache/libdnf5 \
     sed -i 's/stage/check/g' /etc/rpm-ostreed.conf && \
     sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/_copr_ublue-os-akmods.repo && \
     for copr in \
-        kylegospo/bazzite \
+        bazzite-org/bazzite \
         ublue-os/staging \
-        kylegospo/LatencyFleX \
-        kylegospo/rom-properties \
-        kylegospo/webapp-manager \
+        bazzite-org/LatencyFleX \
+        bazzite-org/rom-properties \
+        bazzite-org/webapp-manager \
         hhd-dev/hhd \
         che/nerd-fonts \
         lizardbyte/beta \
@@ -253,9 +269,11 @@ RUN --mount=type=cache,dst=/var/cache/libdnf5 \
     curl -Lo /usr/lib/sysctl.d/99-bore-scheduler.conf https://github.com/CachyOS/CachyOS-Settings/raw/master/usr/lib/sysctl.d/99-bore-scheduler.conf && \
     curl -Lo /etc/distrobox/docker.ini https://github.com/ublue-os/toolboxes/raw/refs/heads/main/apps/docker/distrobox.ini && \
     curl -Lo /etc/distrobox/incus.ini https://github.com/ublue-os/toolboxes/raw/refs/heads/main/apps/incus/distrobox.ini && \
-    /ctx/image-info && \
     /ctx/build-initramfs && \
-    /ctx/finalize
+    /ctx/finalize && \
+    /ctx/image-info
+
+RUN bootc container lint
 
 FROM ghcr.io/ublue-os/akmods-${NVIDIA_FLAVOR}:${KERNEL_FLAVOR}-${FEDORA_MAJOR_VERSION} AS nvidia-akmods
 
@@ -272,10 +290,12 @@ ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-41}"
 ARG VERSION_TAG="${VERSION_TAG}"
 ARG VERSION_PRETTY="${VERSION_PRETTY}"
 
-# Install NVIDIA driver
+# Fetch NVIDIA driver
+COPY system_files/nvidia/shared system_files/nvidia/${BASE_IMAGE_NAME} /
 
-RUN --mount=type=cache,dst=/var/cache/libdnf5 \
-    --mount=type=cache,dst=/var/cache/rpm-ostree \
+# Install NVIDIA driver
+RUN --mount=type=cache,dst=/var/cache \
+    --mount=type=cache,dst=/var/log \
     --mount=type=bind,from=ctx,source=/,target=/ctx \
     --mount=type=bind,from=nvidia-akmods,src=/rpms,dst=/tmp/akmods-rpms \
     --mount=type=tmpfs,dst=/tmp \
@@ -335,10 +355,12 @@ RUN --mount=type=cache,dst=/var/cache/libdnf5 \
    # /ctx/cleanup
 
 # Cleanup & Finalize
-RUN --mount=type=cache,dst=/var/cache/libdnf5 \
-    --mount=type=cache,dst=/var/cache/rpm-ostree \
+RUN --mount=type=cache,dst=/var/cache \
+    --mount=type=cache,dst=/var/log \
     --mount=type=bind,from=ctx,source=/,target=/ctx \
     --mount=type=tmpfs,dst=/tmp \
-    /ctx/image-info && \
     /ctx/build-initramfs && \
-    /ctx/finalize
+    /ctx/finalize && \
+    /ctx/image-info
+
+RUN bootc container lint
