@@ -6,7 +6,7 @@ from typing import Any
 import re
 from collections import defaultdict
 
-REGISTRY = "docker://ghcr.io/drelbszoomer/"
+REGISTRY = "docker://ghcr.io/bleggett/"
 IMAGE_MATRIX = {
     "base": ["nvidia", "nvidia-open"],
     "de": ["gnome"],
@@ -52,7 +52,7 @@ From previous `{target}` version `{prev}` there have been the following changes.
 ### How to rebase
 For current users, type the following to rebase to this version:
 ```bash
-sudo rpm-ostree rebase ostree-image-signed:docker://ghcr.io/drelbszoomer/drelbsos-gnome-{nvidia|nvidia-open}
+sudo rpm-ostree rebase ostree-image-signed:docker://ghcr.io/bleggett/drelbsos-gnome-{nvidia|nvidia-open}
 ```
 """
 HANDWRITTEN_PLACEHOLDER = """\
