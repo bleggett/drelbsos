@@ -288,9 +288,9 @@ jobs:
             org.opencontainers.image.created=<timestamp>
             org.opencontainers.image.licenses=Apache-2.0
             org.opencontainers.image.revision=${{ github.sha }}
-            org.opencontainers.image.source=https://github.com/drelbszoomer/drelbsos
+            org.opencontainers.image.source=https://github.com/bleggett/drelbsos
             org.opencontainers.image.title=drelbsos
-            org.opencontainers.image.url=https://github.com/drelbszoomer/drelbsos
+            org.opencontainers.image.url=https://github.com/bleggett/drelbsos
             org.universal-blue.pkg.kernel=<relver:kernel>
       
       # Generate tags after rechunker runs and checks the primary tag is not duplicated
