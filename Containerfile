@@ -85,9 +85,7 @@ RUN --mount=type=cache,dst=/var/cache \
     dnf5 -y install \
         scx-scheds && \
     dnf5 -y copr disable bieszczaders/kernel-cachyos-addons && \
-    for toswap in rpm-ostree bootc; do \
-        dnf5 -y swap --repo copr:copr.fedorainfracloud.org:bazzite-org:bazzite $toswap $toswap; \
-    done && unset -v toswap && \
+    dnf5 -y swap --repo copr:copr.fedorainfracloud.org:bazzite-org:bazzite bootc bootc && \
     /ctx/cleanup
 
 # Install codec stuff
@@ -280,7 +278,7 @@ RUN --mount=type=cache,dst=/var/cache \
     dnf5 -y install \
         mesa-vdpau-drivers.x86_64 \
         mesa-vdpau-drivers.i686 && \
-    curl -Lo /tmp/nvidia-install.sh https://raw.githubusercontent.com/ublue-os/hwe/1ea2a91b839fc8d635fdf546a74e66bc4eb48c2a/nvidia-install.sh && \
+    curl -Lo /tmp/nvidia-install.sh https://raw.githubusercontent.com/ublue-os/hwe/b3a3dbddf4af81cfbfa7526c1918c9b9f014f86b/nvidia-install.sh && \
     chmod +x /tmp/nvidia-install.sh && \
     IMAGE_NAME="${BASE_IMAGE_NAME}" /tmp/nvidia-install.sh && \
     rm -f /usr/share/vulkan/icd.d/nouveau_icd.*.json && \
