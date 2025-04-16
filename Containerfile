@@ -277,9 +277,9 @@ RUN --mount=type=cache,dst=/var/cache \
     --mount=type=bind,from=nvidia-akmods,src=/rpms,dst=/tmp/akmods-rpms \
     --mount=type=tmpfs,dst=/tmp \
     dnf5 -y copr enable ublue-os/staging && \
-    dnf5 -y install \
-        mesa-vdpau-drivers.x86_64 \
-        mesa-vdpau-drivers.i686 && \
+    # dnf5 -y install \
+    #     mesa-vdpau-drivers.x86_64 \
+    #     mesa-vdpau-drivers.i686 && \
     curl -Lo /tmp/nvidia-install.sh https://raw.githubusercontent.com/ublue-os/hwe/1ea2a91b839fc8d635fdf546a74e66bc4eb48c2a/nvidia-install.sh && \
     chmod +x /tmp/nvidia-install.sh && \
     IMAGE_NAME="${BASE_IMAGE_NAME}" /tmp/nvidia-install.sh && \
