@@ -2,7 +2,7 @@ ARG BASE_IMAGE_NAME="${BASE_IMAGE_NAME:-silverblue}"
 ARG BASE_IMAGE_FLAVOR="${BASE_IMAGE_FLAVOR:-main}"
 ARG IMAGE_FLAVOR="${IMAGE_FLAVOR:-main}"
 ARG NVIDIA_FLAVOR=${NVIDIA_FLAVOR:-nvidia}""
-ARG KERNEL_FLAVOR="${KERNEL_FLAVOR:-bazzite}"
+ARG KERNEL_FLAVOR="${KERNEL_FLAVOR:-main}"
 ARG IMAGE_BRANCH="${IMAGE_BRANCH:-main}"
 ARG SOURCE_IMAGE="${SOURCE_IMAGE:-$BASE_IMAGE_NAME-$BASE_IMAGE_FLAVOR}"
 ARG BASE_IMAGE="ghcr.io/ublue-os/${SOURCE_IMAGE}"
@@ -23,7 +23,7 @@ ARG IMAGE_NAME="${IMAGE_NAME:-drelbsos}"
 ARG IMAGE_VENDOR="${IMAGE_VENDOR:-ublue-os}"
 ARG IMAGE_FLAVOR="${IMAGE_FLAVOR:-main}"
 ARG NVIDIA_FLAVOR="${NVIDIA_FLAVOR:-nvidia}"
-ARG KERNEL_FLAVOR="${KERNEL_FLAVOR:-bazzite}"
+ARG KERNEL_FLAVOR="${KERNEL_FLAVOR:-main}"
 ARG IMAGE_BRANCH="${IMAGE_BRANCH:-main}"
 ARG BASE_IMAGE_NAME="${BASE_IMAGE_NAME:-silverblue}"
 ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-42}"
@@ -267,7 +267,7 @@ ARG IMAGE_NAME="${IMAGE_NAME:-drelbsos-nvidia}"
 ARG IMAGE_VENDOR="${IMAGE_VENDOR:-ublue-os}"
 ARG IMAGE_FLAVOR="${IMAGE_FLAVOR:-nvidia}"
 ARG NVIDIA_FLAVOR="${NVIDIA_FLAVOR:-nvidia}"
-ARG KERNEL_FLAVOR="${KERNEL_FLAVOR:-bazzite}"
+ARG KERNEL_FLAVOR="${KERNEL_FLAVOR:-main}"
 ARG IMAGE_BRANCH="${IMAGE_BRANCH:-main}"
 ARG BASE_IMAGE_NAME="${BASE_IMAGE_NAME:-silverblue}"
 ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-42}"
@@ -292,48 +292,6 @@ RUN --mount=type=cache,dst=/var/cache \
     ln -s libnvidia-ml.so.1 /usr/lib64/libnvidia-ml.so && \
     dnf5 -y copr disable ublue-os/staging && \
     /ctx/cleanup
-
-   #  sed -i 's@enabled=0@enabled=1@g' /etc/yum.repos.d/negativo17-fedora-multimedia.repo && \
-
-   #  sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/rpmfusion*.repo && \
-   #  sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/fedora-cisco-openh264.repo && \
-   #  dnf5 install -y /tmp/akmods-rpms/ublue-os/ublue-os-nvidia-addons-*.rpm && \
-   #  sed -i '0,/enabled=0/{s/enabled=0/enabled=1/}' /etc/yum.repos.d/negativo17-fedora-nvidia.repo && \
-   #  sed -i '0,/enabled=0/{s/enabled=0/enabled=1/}' /etc/yum.repos.d/nvidia-container-toolkit.repo && \
-   #  sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/negativo17-fedora-multimedia.repo && \
-   #  source /tmp/akmods-rpms/kmods/nvidia-vars && \
-
-   #  dnf5 install -y \
-   #      libnvidia-fbc \
-   #      libnvidia-ml.i686 \
-   #      libva-nvidia-driver \
-   #      nvidia-driver \
-   #      nvidia-driver-cuda \
-   #      nvidia-driver-libs.i686 \
-   #      # TODO needed for x86
-   #      vulkan-loader.i686 \
-   #      nvidia-settings \
-   #      nvidia-container-toolkit ${VARIANT_PKGS} \
-   #      /tmp/akmods-rpms/kmods/kmod-nvidia*.fc${RELEASE}.rpm && \
-
-   # sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/negativo17-fedora-nvidia.repo && \
-   # sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/nvidia-container-toolkit.repo && \
-
-   # sed -i "s/^MODULE_VARIANT=.*/MODULE_VARIANT=$KERNEL_MODULE_TYPE/" /etc/nvidia/kernel.conf && \
-
-   # systemctl enable ublue-nvctk-cdi.service && \
-   # semodule --verbose --install /usr/share/selinux/packages/nvidia-container.pp && \
-
-   # # Universal Blue specific Initramfs fixes
-   # cp /etc/modprobe.d/nvidia-modeset.conf /usr/lib/modprobe.d/nvidia-modeset.conf && \
-   # sed -i 's@omit_drivers@force_drivers@g' /usr/lib/dracut/dracut.conf.d/99-nvidia.conf && \
-   # sed -i 's@ nvidia @ i915 amdgpu nvidia @g' /usr/lib/dracut/dracut.conf.d/99-nvidia.conf && \
-
-   # rm -f /usr/share/vulkan/icd.d/nouveau_icd.*.json && \
-   # rm -f /usr/share/vulkan/icd.d/lvp_icd.*.json && \
-   # ln -s libnvidia-ml.so.1 /usr/lib64/libnvidia-ml.so && \
-   # dnf5 -y copr disable ublue-os/staging && \
-   # /ctx/cleanup
 
 # Cleanup & Finalize
 RUN --mount=type=cache,dst=/var/cache \
