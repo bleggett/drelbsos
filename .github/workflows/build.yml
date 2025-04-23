@@ -68,7 +68,7 @@ jobs:
           - fedora_version: 42
             is_latest_version: true
             is_stable_version: true
-            kernel_flavor: main # must match a kernel_flavor from akmods repo
+            kernel_flavor: bazzite # must match a kernel_flavor from akmods repo
         exclude:
           - base_name: drelbsos
             target_nvidia_flavor: nvidia
