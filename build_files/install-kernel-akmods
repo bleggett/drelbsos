@@ -20,3 +20,5 @@ dnf5 -y install \
     /tmp/akmods-rpms/kmods/*openrazer*.rpm \
     /tmp/akmods-rpms/kmods/*v4l2loopback*.rpm \
     /tmp/akmods-rpms/kmods/*wl*.rpm \
+    /tmp/akmods-extra-rpms/kmods/*vhba*.rpm \
+    /tmp/akmods-extra-rpms/kmods/*ryzen-smu*.rpm
