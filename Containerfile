@@ -172,6 +172,7 @@ RUN --mount=type=cache,dst=/var/cache \
         qemu \
         unetbootin \
         libvirt \
+        antimicrox \
         lsb_release \
         wlr-randr && \
     mkdir -p /etc/xdg/autostart && \
