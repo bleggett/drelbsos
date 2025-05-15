@@ -43,7 +43,8 @@ fi
 dnf5 install -y "${MULTILIB[@]}"
 
 # enable repos provided by ublue-os-nvidia-addons
-sed -i '0,/enabled=0/{s/enabled=0/enabled=1/}' /etc/yum.repos.d/fedora-nvidia.repo
+# sed -i '0,/enabled=0/{s/enabled=0/enabled=1/}' /etc/yum.repos.d/fedora-nvidia.repo
+dnf5 -y config-manager setopt "fedora-nvidia".enabled=true
 # sed -i '0,/enabled=0/{s/enabled=0/enabled=1/}' /etc/yum.repos.d/nvidia-container-toolkit.repo
 
 # Disable Multimedia
@@ -54,13 +55,13 @@ if [[ -f /etc/yum.repos.d/negativo17-fedora-multimedia.repo ]] && grep -q "enabl
     sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/negativo17-fedora-multimedia.repo
 fi
 
-# Enable staging for supergfxctl if repo file exists
-if [[ -f /etc/yum.repos.d/_copr_ublue-os-staging.repo ]]; then
-    sed -i 's@enabled=0@enabled=1@g' /etc/yum.repos.d/_copr_ublue-os-staging.repo
-else
-    # Otherwise, retrieve the repo file for staging
-    curl -Lo /etc/yum.repos.d/_copr_ublue-os-staging.repo https://copr.fedorainfracloud.org/coprs/ublue-os/staging/repo/fedora-"${RELEASE}"/ublue-os-staging-fedora-"${RELEASE}".repo
-fi
+# # Enable staging for supergfxctl if repo file exists
+# if [[ -f /etc/yum.repos.d/_copr_ublue-os-staging.repo ]]; then
+#     sed -i 's@enabled=0@enabled=1@g' /etc/yum.repos.d/_copr_ublue-os-staging.repo
+# else
+#     # Otherwise, retrieve the repo file for staging
+#     curl -Lo /etc/yum.repos.d/_copr_ublue-os-staging.repo https://copr.fedorainfracloud.org/coprs/ublue-os/staging/repo/fedora-"${RELEASE}"/ublue-os-staging-fedora-"${RELEASE}".repo
+# fi
 
 source "${AKMODNV_PATH}"/kmods/nvidia-vars
 
@@ -78,7 +79,7 @@ dnf5 install -y \
 
 ## nvidia post-install steps
 # disable repos provided by ublue-os-nvidia-addons
-sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/fedora-nvidia.repo
+dnf5 -y config-manager setopt "fedora-nvidia".enabled=false
 # sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/nvidia-container-toolkit.repo
 
 # Disable staging
