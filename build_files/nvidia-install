@@ -66,6 +66,9 @@ fi
 source "${AKMODNV_PATH}"/kmods/nvidia-vars
 
 ls -lah  "${AKMODNV_PATH}"/kmods/
+ls -lah  "${AKMODNV_PATH}"/kmods/nvidia
+
+dnf5 install -y "${AKMODNV_PATH}"/kmods/kmod-nvidia-"${KERNEL_VERSION}"-"${NVIDIA_AKMOD_VERSION}".fc"${RELEASE}".rpm
 
 dnf5 install -y \
     libnvidia-fbc \
@@ -75,9 +78,7 @@ dnf5 install -y \
     nvidia-driver-cuda \
     nvidia-driver-cuda-libs.i686 \
     nvidia-driver-libs.i686 \
-    nvidia-settings \
-    # nvidia-container-toolkit ${VARIANT_PKGS} \
-    "${AKMODNV_PATH}"/kmods/kmod-nvidia-"${KERNEL_VERSION}"-"${NVIDIA_AKMOD_VERSION}".fc"${RELEASE}".rpm
+    nvidia-settings
 
 ## nvidia post-install steps
 # disable repos provided by ublue-os-nvidia-addons
