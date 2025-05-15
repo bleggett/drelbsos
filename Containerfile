@@ -262,7 +262,7 @@ RUN --mount=type=cache,dst=/var/cache \
 RUN bootc container lint
 
 # FROM ghcr.io/ublue-os/akmods-${NVIDIA_FLAVOR}:${KERNEL_FLAVOR}-${FEDORA_MAJOR_VERSION} AS nvidia-akmods
-FROM ghcr.io/bleggett/drelbsos-kernel:${FEDORA_MAJOR_VERSION} as drelbs-kernel
+# FROM ghcr.io/bleggett/drelbsos-kernel:${FEDORA_MAJOR_VERSION} as drelbs-kernel
 
 FROM drelbsos AS drelbsos-nvidia
 
