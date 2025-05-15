@@ -18,7 +18,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           packages:
-            drelbsos-gnome-nvidia,drelbsos-gnome,drelbsos-gnome-nvidia-open
+            drelbsos-gnome-nvidia,drelbsos-gnome-nvidia-open
           older-than: 90 days
           delete-orphaned-images: true
           keep-n-tagged: 7
