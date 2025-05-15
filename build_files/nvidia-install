@@ -43,16 +43,16 @@ fi
 dnf5 install -y "${MULTILIB[@]}"
 
 # enable repos provided by ublue-os-nvidia-addons
-sed -i '0,/enabled=0/{s/enabled=0/enabled=1/}' /etc/yum.repos.d/negativo17-fedora-nvidia.repo
+sed -i '0,/enabled=0/{s/enabled=0/enabled=1/}' /etc/yum.repos.d/negativo17-fedora-multimedia.repo
 # sed -i '0,/enabled=0/{s/enabled=0/enabled=1/}' /etc/yum.repos.d/nvidia-container-toolkit.repo
 
 # Disable Multimedia
-NEGATIVO17_MULT_PREV_ENABLED=N
-if [[ -f /etc/yum.repos.d/negativo17-fedora-multimedia.repo ]] && grep -q "enabled=1" /etc/yum.repos.d/negativo17-fedora-multimedia.repo; then
-    NEGATIVO17_MULT_PREV_ENABLED=Y
-    echo "disabling negativo17-fedora-multimedia to ensure negativo17-fedora-nvidia is used"
-    sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/negativo17-fedora-multimedia.repo
-fi
+# NEGATIVO17_MULT_PREV_ENABLED=N
+# if [[ -f /etc/yum.repos.d/negativo17-fedora-multimedia.repo ]] && grep -q "enabled=1" /etc/yum.repos.d/negativo17-fedora-multimedia.repo; then
+#     NEGATIVO17_MULT_PREV_ENABLED=Y
+#     echo "disabling negativo17-fedora-multimedia to ensure negativo17-fedora-nvidia is used"
+#     sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/negativo17-fedora-multimedia.repo
+# fi
 
 # Enable staging for supergfxctl if repo file exists
 if [[ -f /etc/yum.repos.d/_copr_ublue-os-staging.repo ]]; then
@@ -78,7 +78,7 @@ dnf5 install -y \
 
 ## nvidia post-install steps
 # disable repos provided by ublue-os-nvidia-addons
-sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/negativo17-fedora-nvidia.repo
+# sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/negativo17-fedora-nvidia.repo
 # sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/nvidia-container-toolkit.repo
 
 # Disable staging
@@ -98,7 +98,7 @@ sed -i 's@omit_drivers@force_drivers@g' /usr/lib/dracut/dracut.conf.d/99-nvidia.
 # as we need forced load, also mustpre-load intel/amd iGPU else chromium web browsers fail to use hardware acceleration
 sed -i 's@ nvidia @ i915 amdgpu nvidia @g' /usr/lib/dracut/dracut.conf.d/99-nvidia.conf
 
-# re-enable negativo17-mutlimedia since we disabled it
-if [[ "${NEGATIVO17_MULT_PREV_ENABLED}" = "Y" ]]; then
-    sed -i '0,/enabled=0/{s/enabled=0/enabled=1/}' /etc/yum.repos.d/negativo17-fedora-multimedia.repo
-fi
+# # re-enable negativo17-mutlimedia since we disabled it
+# if [[ "${NEGATIVO17_MULT_PREV_ENABLED}" = "Y" ]]; then
+#     sed -i '0,/enabled=0/{s/enabled=0/enabled=1/}' /etc/yum.repos.d/negativo17-fedora-multimedia.repo
+# fi
