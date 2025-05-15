@@ -85,8 +85,8 @@ dnf5 install -y \
 dnf5 -y config-manager setopt "fedora-nvidia".enabled=false
 # sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/nvidia-container-toolkit.repo
 
-# Disable staging
-sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/_copr_ublue-os-staging.repo
+# # Disable staging
+# sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/_copr_ublue-os-staging.repo
 
 # ensure kernel.conf matches NVIDIA_FLAVOR (which must be nvidia or nvidia-open)
 # kmod-nvidia-common defaults to 'nvidia-open' but this will match our akmod image
