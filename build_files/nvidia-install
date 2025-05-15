@@ -43,7 +43,7 @@ fi
 dnf5 install -y "${MULTILIB[@]}"
 
 # enable repos provided by ublue-os-nvidia-addons
-sed -i '0,/enabled=0/{s/enabled=0/enabled=1/}' /etc/yum.repos.d/negativo17-fedora-nvidia.repo
+sed -i '0,/enabled=0/{s/enabled=0/enabled=1/}' /etc/yum.repos.d/fedora-nvidia.repo
 # sed -i '0,/enabled=0/{s/enabled=0/enabled=1/}' /etc/yum.repos.d/nvidia-container-toolkit.repo
 
 # Disable Multimedia
@@ -78,7 +78,7 @@ dnf5 install -y \
 
 ## nvidia post-install steps
 # disable repos provided by ublue-os-nvidia-addons
-sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/negativo17-fedora-nvidia.repo
+sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/fedora-nvidia.repo
 # sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/nvidia-container-toolkit.repo
 
 # Disable staging
