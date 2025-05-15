@@ -18,6 +18,6 @@ dnf5 versionlock add kernel kernel-devel kernel-devel-matched kernel-core kernel
 dnf5 -y install \
     /tmp/akmods-rpms/kmods/*xone*.rpm \
     /tmp/akmods-rpms/kmods/*openrazer*.rpm \
-    /tmp/akmods-extra-rpms/kmods/*vhba*.rpm \
-    /tmp/akmods-extra-rpms/kmods/*gcadapter*.rpm \
-    /tmp/akmods-extra-rpms/kmods/*ryzen-smu*.rpm
+    /tmp/akmods-rpms/kmods/*vhba*.rpm \
+    /tmp/akmods-rpms/kmods/*gcadapter*.rpm \
+    /tmp/akmods-rpms/kmods/*ryzen-smu*.rpm
