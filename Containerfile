@@ -34,8 +34,8 @@ RUN --mount=type=cache,dst=/var/cache/libdnf5 \
     /ctx/unwrap && \
     dnf5 -y install dnf5-plugins && \
     for copr in \
-        bazzite-org/bazzite \
-        bazzite-org/bazzite-multilib \
+        # bazzite-org/bazzite \
+        # bazzite-org/bazzite-multilib \
         ublue-os/staging \
         ublue-os/akmods \
         bazzite-org/LatencyFleX \
@@ -63,7 +63,7 @@ RUN --mount=type=cache,dst=/var/cache/libdnf5 \
     sed -i 's@enabled=0@enabled=1@g' /etc/yum.repos.d/fedora-multimedia.repo && \
     dnf5 -y config-manager addrepo --from-repofile=https://negativo17.org/repos/fedora-rar.repo && \
     dnf5 -y config-manager addrepo --from-repofile=https://negativo17.org/repos/fedora-nvidia.repo && \
-    dnf5 -y config-manager setopt "*bazzite*".priority=1 && \
+    # dnf5 -y config-manager setopt "*bazzite*".priority=1 && \
     dnf5 -y config-manager setopt "*akmods*".priority=2 && \
     dnf5 -y config-manager setopt "*terra*".priority=3 "*terra*".exclude="nerd-fonts topgrade" && \
     dnf5 -y config-manager setopt "terra-mesa".enabled=true && \
@@ -244,7 +244,7 @@ RUN --mount=type=cache,dst=/var/cache \
     --mount=type=bind,from=ctx,source=/,target=/ctx \
     --mount=type=tmpfs,dst=/tmp \
     dnf5 -y install \
- 	nautilus-gsconnect \
+        nautilus-gsconnect \
         gnome-randr-rust \
         gnome-shell-extension-appindicator \
         gnome-shell-extension-gsconnect \
