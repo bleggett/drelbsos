@@ -42,6 +42,7 @@ RUN --mount=type=cache,dst=/var/cache/libdnf5 \
         bazzite-org/bazzite \
         bazzite-org/bazzite-multilib \
         ublue-os/staging \
+        ublue-os/akmods \
         bazzite-org/LatencyFleX \
         bazzite-org/rom-properties \
         bazzite-org/webapp-manager \
