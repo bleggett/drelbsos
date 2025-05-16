@@ -350,7 +350,7 @@ jobs:
           command: |
             echo "${{ secrets.GITHUB_TOKEN }}" | sudo podman login ghcr.io -u ${{ github.actor }} --password-stdin
             for tag in ${{ steps.generate-tags.outputs.alias_tags }}; do
-              sudo skopeo copy ${{ steps.rechunk.outputs.ref }} docker://${{ env.PUSH_IMAGE_REGISTRY }}/${{ env.IMAGE_NAME }}:$tag
+              sudo skopeo copy ${{ steps.rechunk.outputs.ref }} docker://${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAME }}:$tag
             done
 
       - name: Get Image Digest
