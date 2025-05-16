@@ -114,8 +114,8 @@ RUN --mount=type=cache,dst=/var/cache \
         fdk-aac-free \
         totem-video-thumbnailer \
         firefox \
-        gstreamer-plugins-ugly-free \
-        gstreamer-plugins-bad-free \
+        gstreamer1-plugins-ugly-free \
+        gstreamer1-plugins-bad-free \
         firefox-langpacks && \
     /ctx/cleanup
 
@@ -190,7 +190,6 @@ RUN --mount=type=cache,dst=/var/cache \
         libcamera-tools \
         libcamera-gstreamer \
         libcamera-ipa \
-        libfdk-aac \
         libheif \
         libratbag-ratbagd \
         libva-utils \
@@ -222,10 +221,10 @@ RUN --mount=type=cache,dst=/var/cache \
         zstd \
         adw-gtk3-theme \
         gvfs-nfs \
-        gstreamer-plugins-ugly \
-        gstreamer-plugins-bad \
-        gstreamer-plugins-bad-extras \
-        gstreamer-plugins-good-extras \
+        gstreamer1-plugins-ugly \
+        gstreamer1-plugins-bad \
+        gstreamer1-plugins-bad-extras \
+        gstreamer1-plugins-good-extras \
         wlr-randr && \
     mkdir -p /etc/xdg/autostart && \
     sed -i 's/ --xdg-runtime=\\"${XDG_RUNTIME_DIR}\\"//g' /usr/bin/btrfs-assistant-launcher && \
