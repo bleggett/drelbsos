@@ -242,10 +242,10 @@ RUN --mount=type=cache,dst=/var/cache \
     --mount=type=bind,from=ctx,source=/,target=/ctx \
     --mount=type=tmpfs,dst=/tmp \
     dnf5 -y install \
-        nautilus-gsconnect \
-        gnome-randr-rust \
-        gnome-shell-extension-appindicator \
-        gnome-shell-extension-gsconnect \
+        # nautilus-gsconnect \
+        # gnome-randr-rust \
+        # gnome-shell-extension-appindicator \
+        # gnome-shell-extension-gsconnect \
         firewall-config \
         rom-properties-gtk3 && \
     /ctx/cleanup
