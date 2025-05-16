@@ -114,8 +114,6 @@ RUN --mount=type=cache,dst=/var/cache \
         fdk-aac-free \
         totem-video-thumbnailer \
         firefox \
-        gstreamer1-plugins-ugly-free \
-        gstreamer1-plugins-bad-free \
         firefox-langpacks && \
     /ctx/cleanup
 
@@ -221,6 +219,7 @@ RUN --mount=type=cache,dst=/var/cache \
         zstd \
         adw-gtk3-theme \
         gvfs-nfs \
+        gstreamer1-plugin-libav \
         gstreamer1-plugins-ugly \
         gstreamer1-plugins-bad \
         gstreamer1-plugins-good-extras \
