@@ -223,7 +223,6 @@ RUN --mount=type=cache,dst=/var/cache \
         gvfs-nfs \
         gstreamer1-plugins-ugly \
         gstreamer1-plugins-bad \
-        gstreamer1-plugins-bad-extras \
         gstreamer1-plugins-good-extras \
         wlr-randr && \
     mkdir -p /etc/xdg/autostart && \
