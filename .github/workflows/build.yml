@@ -136,7 +136,7 @@ jobs:
           remove-cached-tools: true
           remove-swapfile: true
 
-      - name: Pull main, akmods, rechunk images
+      - name: Pull and rechunk images
         uses: Wandalen/wretry.action@v3.8.0
         with:
           attempt_limit: 3
@@ -144,7 +144,7 @@ jobs:
           command: |
             # pull the base images used for FROM in Containerfile so
             # we can retry on that unfortunately common failure case
-            # sudo podman pull ${{ env.IMAGE_REGISTRY }}/${{ matrix.base_image_name }}-${{ matrix.base_image_flavor }}:${{ matrix.fedora_version }}
+            sudo podman pull quay.io/fedora-ostree-desktops/silverblue:${{ matrix.fedora_version }}
             sudo podman pull ${{ env.IMAGE_REGISTRY }}/drelbsos-kernel:${{ matrix.fedora_version }}
 
             # Add rechunk as well to remove this source of failure
@@ -219,7 +219,7 @@ jobs:
       - name: Remove auxiliary images
         # We are tight on space, need at least 2x for OSTree
         run: |
-          # sudo podman image rm ${{ env.PULL_IMAGE_REGISTRY }}/${{ matrix.base_image_name }}-${{ matrix.base_image_flavor }}:${{ matrix.fedora_version }}
+          sudo podman image rm quay.io/fedora-ostree-desktops/silverblue:${{ matrix.fedora_version }}
           sudo podman image rm ${{ env.IMAGE_REGISTRY }}/drelbsos-kernel:${{ matrix.fedora_version }}
 
       # Generate the previous image reference used by the Rechunker
