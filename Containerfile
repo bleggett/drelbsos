@@ -110,7 +110,12 @@ RUN --mount=type=cache,dst=/var/cache \
     dnf5 -y remove \
         ublue-os-update-services \
         opensc \
+        ffmpeg-free \
+        fdk-aac-free \
+        totem-video-thumbnailer \
         firefox \
+        gstreamer-plugins-ugly-free \
+        gstreamer-plugins-bad-free \
         firefox-langpacks && \
     /ctx/cleanup
 
@@ -167,6 +172,58 @@ RUN --mount=type=cache,dst=/var/cache \
         libvirt \
         antimicrox \
         lsb_release \
+        alsa-firmware \
+        android-udev-rules \
+        distrobox \
+        fdk-aac \
+        ffmpeg \
+        ffmpeg-libs \
+        ffmpegthumbnailer \
+        flatpak-spawn \
+        fuse \
+        fzf \
+        grub2-tools-extra \
+        heif-pixbuf-loader \
+        htop \
+        libavcodec \
+        libcamera \
+        libcamera-tools \
+        libcamera-gstreamer \
+        libcamera-ipa \
+        libfdk-aac \
+        libheif \
+        libratbag-ratbagd \
+        libva-utils \
+        lshw \
+        mesa-libxatracker \
+        net-tools \
+        nvme-cli \
+        nvtop \
+        openrgb-udev-rules \
+        openssl \
+        pam-u2f \
+        pam_yubico \
+        pamu2fcfg \
+        pipewire-libs-extra \
+        pipewire-plugin-libcamera \
+        powerstat \
+        smartmontools \
+        squashfs-tools \
+        symlinks \
+        tcpdump \
+        screen \
+        traceroute \
+        vim \
+        wireguard-tools \
+        wl-clipboard \
+        xhost \
+        xorg-x11-xauth \
+        yubikey-manager \
+        zstd \
+        adw-gtk3-theme \
+        gvfs-nfs \
+        gstreamer-plugins-ugly \
+        gstreamer-plugins-bad \
         wlr-randr && \
     mkdir -p /etc/xdg/autostart && \
     sed -i 's/ --xdg-runtime=\\"${XDG_RUNTIME_DIR}\\"//g' /usr/bin/btrfs-assistant-launcher && \
