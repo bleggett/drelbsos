@@ -209,8 +209,6 @@ jobs:
             --build-arg IMAGE_NAME=${{ env.IMAGE_NAME }} \
             --build-arg IMAGE_FLAVOR=${{ env.IMAGE_FLAVOR }} \
             --build-arg IMAGE_VENDOR=${{ github.repository_owner }} \
-            --build-arg BASE_IMAGE_NAME=${{ matrix.base_image_name }} \
-            --build-arg BASE_IMAGE_FLAVOR=${{ matrix.base_image_flavor }} \
             --build-arg FEDORA_VERSION=${{ matrix.fedora_version }} \
             --build-arg IMAGE_BRANCH=${{ github.ref_name }} \
             --build-arg SHA_HEAD_SHORT=${{ env.SHA_HEAD_SHORT }} \
@@ -341,14 +339,6 @@ jobs:
           done
           echo "alias_tags=${BUILD_TAGS[*]}" >> $GITHUB_OUTPUT
 
-      # Workaround bug where capital letters in your GitHub username make it impossible to push to GHCR.
-      # https://github.com/macbre/push-to-ghcr/issues/12
-      - name: Lowercase Registry
-        id: registry_case
-        uses: ASzc/change-string-case-action@v6
-        with:
-          string: ${{ env.PUSH_IMAGE_REGISTRY }}
-
       # Push the image to GHCR (Image Registry)
       - name: Push To GHCR
         uses: Wandalen/wretry.action@v3.8.0
@@ -360,7 +350,7 @@ jobs:
           command: |
             echo "${{ secrets.GITHUB_TOKEN }}" | sudo podman login ghcr.io -u ${{ github.actor }} --password-stdin
             for tag in ${{ steps.generate-tags.outputs.alias_tags }}; do
-              sudo skopeo copy ${{ steps.rechunk.outputs.ref }} docker://${{ steps.registry_case.outputs.lowercase }}/${{ env.IMAGE_NAME }}:$tag
+              sudo skopeo copy ${{ steps.rechunk.outputs.ref }} docker://${{ env.PUSH_IMAGE_REGISTRY }}/${{ env.IMAGE_NAME }}:$tag
             done
 
       - name: Get Image Digest
