@@ -110,9 +110,9 @@ RUN --mount=type=cache,dst=/var/cache \
     dnf5 -y remove \
         ublue-os-update-services \
         opensc \
-        ffmpeg-free \
-        fdk-aac-free \
-        totem-video-thumbnailer \
+        # ffmpeg-free \
+        # fdk-aac-free \
+        # totem-video-thumbnailer \
         firefox \
         firefox-langpacks && \
     /ctx/cleanup
