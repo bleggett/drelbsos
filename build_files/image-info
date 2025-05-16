@@ -11,6 +11,7 @@ BUG_SUPPORT_URL="https://github.com/bleggett/drelbsos"
 LOGO_ICON="bazzite-logo-icon"
 LOGO_COLOR="0;38;2;138;43;226"
 CODE_NAME="Trollaboar"
+BASE_IMAGE_NAME="silverblue"
 
 IMAGE_INFO="/usr/share/ublue-os/image-info.json"
 IMAGE_REF="ostree-image-signed:docker://ghcr.io/$IMAGE_VENDOR/$IMAGE_NAME"
@@ -38,7 +39,7 @@ cat > $IMAGE_INFO <<EOF
   "image-ref": "$IMAGE_REF",
   "image-tag": "$IMAGE_TAG",
   "image-branch": "$IMAGE_BRANCH_NORMALIZED",
-  "base-image-name": "$SOURCE_IMAGE",
+  "base-image-name": "$BASE_IMAGE_NAME",
   "fedora-version": "$FEDORA_MAJOR_VERSION",
   "version": "$VERSION_TAG",
   "version-pretty": "$VERSION_PRETTY"
