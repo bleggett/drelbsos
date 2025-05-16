@@ -152,7 +152,6 @@ RUN --mount=type=cache,dst=/var/cache \
         rar \
         libxcrypt-compat \
         vulkan-tools \
-        xwiimote-ng \
         fastfetch \
         topgrade \
         ydotool \
