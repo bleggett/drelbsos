@@ -1,6 +1,6 @@
 # DrelbsOS
 
-An Atari-approved, Spectrum-certified, disgustingly personal Fedora Atomic variant, based on Silverblue. 
+An Atari-approved, ZX Spectrum-certified, disgustingly personal Fedora Atomic variant, based on Silverblue. 
 
 DrelbsOS is indebted to the amazing work Universal Blue has done to make building Fedora OSTree variants ridiculously simple.
 
