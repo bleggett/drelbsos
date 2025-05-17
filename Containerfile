@@ -24,13 +24,14 @@ ARG SHA_HEAD_SHORT="${SHA_HEAD_SHORT}"
 ARG VERSION_TAG="${VERSION_TAG}"
 ARG VERSION_PRETTY="${VERSION_PRETTY}"
 
-COPY system_files/desktop/shared /
+COPY system_files/ /
 
 # Setup Copr repos (new)
 RUN --mount=type=cache,dst=/var/cache/libdnf5 \
     --mount=type=cache,dst=/var/cache/rpm-ostree \
     --mount=type=bind,from=ctx,source=/,target=/ctx \
     --mount=type=tmpfs,dst=/tmp \
+    export GPG_TTY=$(tty) &&
     /ctx/unwrap && \
     dnf5 -y install dnf5-plugins && \
     for copr in \
@@ -251,7 +252,6 @@ RUN --mount=type=cache,dst=/var/cache \
     /ctx/cleanup
 
 # Cleanup & Finalize
-COPY system_files/overrides /
 RUN --mount=type=cache,dst=/var/cache \
     --mount=type=cache,dst=/var/log \
     --mount=type=bind,from=ctx,source=/,target=/ctx \
