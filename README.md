@@ -14,4 +14,4 @@ Pubkey for the signed images published by this repo is `cosign.pub` in the root 
 
 ## Secure Boot
 
-TODO, as this is a personal distro and not security focused.
+TODO, as this is a personal distro for play machines, and not security focused. I don't use this for machines I want to protect and neither should you.
