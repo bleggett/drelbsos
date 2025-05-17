@@ -18,9 +18,6 @@ sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/rpmfusion*.repo
 
 sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/fedora-cisco-openh264.repo
 
-## nvidia install steps
-# dnf5 install -y "${AKMODNV_PATH}"/ublue-os/ublue-os-nvidia-addons-*.rpm
-
 # Install MULTILIB packages from negativo17-multimedia prior to disabling repo
 
 MULTILIB=(
@@ -42,10 +39,7 @@ fi
 
 dnf5 install -y "${MULTILIB[@]}"
 
-# enable repos provided by ublue-os-nvidia-addons
-# sed -i '0,/enabled=0/{s/enabled=0/enabled=1/}' /etc/yum.repos.d/fedora-nvidia.repo
 dnf5 -y config-manager setopt "fedora-nvidia".enabled=true
-# sed -i '0,/enabled=0/{s/enabled=0/enabled=1/}' /etc/yum.repos.d/nvidia-container-toolkit.repo
 
 # Disable Multimedia
 NEGATIVO17_MULT_PREV_ENABLED=N
@@ -54,14 +48,6 @@ if [[ -f /etc/yum.repos.d/negativo17-fedora-multimedia.repo ]] && grep -q "enabl
     echo "disabling negativo17-fedora-multimedia to ensure negativo17-fedora-nvidia is used"
     sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/negativo17-fedora-multimedia.repo
 fi
-
-# # Enable staging for supergfxctl if repo file exists
-# if [[ -f /etc/yum.repos.d/_copr_ublue-os-staging.repo ]]; then
-#     sed -i 's@enabled=0@enabled=1@g' /etc/yum.repos.d/_copr_ublue-os-staging.repo
-# else
-#     # Otherwise, retrieve the repo file for staging
-#     curl -Lo /etc/yum.repos.d/_copr_ublue-os-staging.repo https://copr.fedorainfracloud.org/coprs/ublue-os/staging/repo/fedora-"${RELEASE}"/ublue-os-staging-fedora-"${RELEASE}".repo
-# fi
 
 source "${AKMODNV_PATH}"/kmods/nvidia-vars
 
@@ -81,19 +67,11 @@ dnf5 install -y \
     nvidia-settings
 
 ## nvidia post-install steps
-# disable repos provided by ublue-os-nvidia-addons
 dnf5 -y config-manager setopt "fedora-nvidia".enabled=false
-# sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/nvidia-container-toolkit.repo
-
-# # Disable staging
-# sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/_copr_ublue-os-staging.repo
 
 # ensure kernel.conf matches NVIDIA_FLAVOR (which must be nvidia or nvidia-open)
 # kmod-nvidia-common defaults to 'nvidia-open' but this will match our akmod image
 sed -i "s/^MODULE_VARIANT=.*/MODULE_VARIANT=$KERNEL_MODULE_TYPE/" /etc/nvidia/kernel.conf
-
-# systemctl enable ublue-nvctk-cdi.service
-# semodule --verbose --install /usr/share/selinux/packages/nvidia-container.pp
 
 # Universal Blue specific Initramfs fixes
 cp /etc/modprobe.d/nvidia-modeset.conf /usr/lib/modprobe.d/nvidia-modeset.conf
