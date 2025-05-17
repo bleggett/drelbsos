@@ -265,8 +265,6 @@ RUN --mount=type=cache,dst=/var/cache \
     ln -s "/usr/share/ublue-os/firstboot/launcher/login-profile.sh" \
     "/etc/profile.d/ublue-firstboot.sh" && \
     mkdir -p "/etc/xdg/autostart" && \
-    echo "import \"/usr/share/ublue-os/just/81-bazzite-fixes.just\"" >> /usr/share/ublue-os/justfile && \
-    echo "import \"/usr/share/ublue-os/just/84-bazzite-virt.just\"" >> /usr/share/ublue-os/justfile && \
     sed -i 's/stage/check/g' /etc/rpm-ostreed.conf && \
     dnf5 -y config-manager setopt "*ublue-os:akmods*".enabled=false && \
     for copr in \
@@ -287,11 +285,7 @@ RUN --mount=type=cache,dst=/var/cache \
     mkdir -p /etc/flatpak/remotes.d && \
     curl -Lo /etc/flatpak/remotes.d/flathub.flatpakrepo https://dl.flathub.org/repo/flathub.flatpakrepo && \
     systemctl enable input-remapper.service && \
-    systemctl enable bazzite-flatpak-manager.service && \
-    systemctl enable incus-workaround.service && \
-    systemctl enable bazzite-hardware-setup.service && \
     systemctl enable dev-hugepages1G.mount && \
-    systemctl --global enable bazzite-user-setup.service && \
     systemctl --global enable podman.socket && \
     systemctl --global enable systemd-tmpfiles-setup.service && \
     sed -i 's@\[Desktop Entry\]@\[Desktop Entry\]\nNoDisplay=true@g' /usr/share/applications/yad-icon-browser.desktop && \
