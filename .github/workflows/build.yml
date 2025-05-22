@@ -180,19 +180,9 @@ jobs:
           FEDORA_VERSION="${{ matrix.fedora_version }}"
           SHA_SHORT="${GITHUB_SHA::7}"
 
-          if [ -n "${{ github.event.pull_request.number }}" ]; then
-            VERSION="pr-${FEDORA_VERSION}-${{ github.event.pull_request.number }}"
-            PRETTY_VERSION="PR (${{ github.event.pull_request.number }}, ${RELEASE_TAG})"
-          elif [[ ${{ github.ref_name }} == "unstable" ]]; then
-            VERSION="unstable-${RELEASE_TAG}"
-            PRETTY_VERSION="Unstable (F${RELEASE_TAG}, #${SHA_SHORT})"
-          elif [[ ${{ github.ref_name }} == "testing" ]]; then
-            VERSION="testing-${RELEASE_TAG}"
-            PRETTY_VERSION="Testing (F${RELEASE_TAG}, #${SHA_SHORT})"
-          else
-            VERSION="${RELEASE_TAG}"
-            PRETTY_VERSION="Stable (F${RELEASE_TAG})"
-          fi
+          VERSION="${FEDORA_VERSION}.${RELEASE_TAG}"
+          PRETTY_VERSION="Stable (F${VERSION})"
+
           echo "tag=${VERSION}" >> $GITHUB_OUTPUT
           echo "pretty=${PRETTY_VERSION}" >> $GITHUB_OUTPUT
 
