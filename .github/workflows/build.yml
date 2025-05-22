@@ -174,25 +174,24 @@ jobs:
         run: |
           # Generate the primary version key that will be stored on os-release,
           # shown on the bootloader, and used for the image tag.
-          UPSTREAM_TAG="${{ env.SOURCE_IMAGE_VERSION }}"
+          RELEASE_TAG="$(date +%Y%m%d)"
           # Remove .0 suffix from upstream tag so we can add our own and
           # the wrong one does not end up in the image.
-          UPSTREAM_TAG="${UPSTREAM_TAG%.*}"
           FEDORA_VERSION="${{ matrix.fedora_version }}"
           SHA_SHORT="${GITHUB_SHA::7}"
 
           if [ -n "${{ github.event.pull_request.number }}" ]; then
             VERSION="pr-${FEDORA_VERSION}-${{ github.event.pull_request.number }}"
-            PRETTY_VERSION="PR (${{ github.event.pull_request.number }}, ${UPSTREAM_TAG})"
+            PRETTY_VERSION="PR (${{ github.event.pull_request.number }}, ${RELEASE_TAG})"
           elif [[ ${{ github.ref_name }} == "unstable" ]]; then
-            VERSION="unstable-${UPSTREAM_TAG}"
-            PRETTY_VERSION="Unstable (F${UPSTREAM_TAG}, #${SHA_SHORT})"
+            VERSION="unstable-${RELEASE_TAG}"
+            PRETTY_VERSION="Unstable (F${RELEASE_TAG}, #${SHA_SHORT})"
           elif [[ ${{ github.ref_name }} == "testing" ]]; then
-            VERSION="testing-${UPSTREAM_TAG}"
-            PRETTY_VERSION="Testing (F${UPSTREAM_TAG}, #${SHA_SHORT})"
+            VERSION="testing-${RELEASE_TAG}"
+            PRETTY_VERSION="Testing (F${RELEASE_TAG}, #${SHA_SHORT})"
           else
-            VERSION="${UPSTREAM_TAG}"
-            PRETTY_VERSION="Stable (F${UPSTREAM_TAG})"
+            VERSION="${RELEASE_TAG}"
+            PRETTY_VERSION="Stable (F${RELEASE_TAG})"
           fi
           echo "tag=${VERSION}" >> $GITHUB_OUTPUT
           echo "pretty=${PRETTY_VERSION}" >> $GITHUB_OUTPUT
