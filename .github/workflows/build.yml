@@ -192,7 +192,7 @@ jobs:
             PRETTY_VERSION="Testing (F${UPSTREAM_TAG}, #${SHA_SHORT})"
           else
             VERSION="${UPSTREAM_TAG}"
-            PRETTY_VERSION="Stable (F${UPSTREAM_TAG}, #${SHA_SHORT})"
+            PRETTY_VERSION="Stable (F${UPSTREAM_TAG})"
           fi
           echo "tag=${VERSION}" >> $GITHUB_OUTPUT
           echo "pretty=${PRETTY_VERSION}" >> $GITHUB_OUTPUT
