@@ -61,7 +61,7 @@ jobs:
         base_name: [drelbsos, drelbsos-nvidia]
         base_image_name: [silverblue]
         target_image_flavor: [main]
-        target_nvidia_flavor: [nvidia, nvidia-open]
+        target_nvidia_flavor: [nvidia-open]
         fedora_version: [42]
         include:
           - fedora_version: 42
