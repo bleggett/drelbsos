@@ -377,7 +377,7 @@ def main():
 
     manifests = get_manifests(target)
     prev, curr = get_tags(target, manifests)
-    curr = args.new_target
+    # curr = args.new_target
     print(f"Previous tag: {prev}")
     print(f"Current tag: {curr}")
 
