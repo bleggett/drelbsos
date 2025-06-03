@@ -16,8 +16,7 @@ IMAGE_MATRIX = {
 RETRIES = 3
 RETRY_WAIT = 5
 FEDORA_PATTERN = re.compile(r"\.fc\d\d")
-STABLE_START_PATTERN = re.compile(r"\d\d\.\d")
-OTHER_START_PATTERN = lambda target: re.compile(rf"{target}-\d\d\.\d")
+STABLE_START_PATTERN = re.compile(r"^\d+\.\d+")
 
 PATTERN_ADD = "\n| ✨ | {name} | | {version} |"
 PATTERN_CHANGE = "\n| 🔄 | {name} | {prev} | {new} |"
@@ -117,18 +116,14 @@ def get_tags(target: str, manifests: dict[str, Any]):
         # Tags ending with .0 should not exist
         if re.match(r'.*\.\d$', tag):
             continue
-        if target != "stable":
-            if re.match(OTHER_START_PATTERN(target), tag):
-                tags.add(tag)
-        else:
-            if re.match(STABLE_START_PATTERN, tag):
-                tags.add(tag)
+        if re.match(STABLE_START_PATTERN, tag):
+            tags.add(tag)
 
     # Remove tags not present in all images
-    for manifest in manifests.values():
-        for tag in list(tags):
-            if tag not in manifest["RepoTags"]:
-                tags.remove(tag)
+    # for manifest in manifests.values():
+    #     for tag in list(tags):
+    #         if tag not in manifest["RepoTags"]:
+    #             tags.remove(tag)
 
     tags = list(sorted(tags))
     assert len(tags) > 2, "No current and previous tags found"
@@ -382,8 +377,9 @@ def main():
 
     manifests = get_manifests(target)
     prev, curr = get_tags(target, manifests)
+    curr = args.new_target
     print(f"Previous tag: {prev}")
-    print(f" Current tag: {curr}")
+    print(f"Current tag: {curr}")
 
     prev_manifests = get_manifests(prev)
     title, changelog = generate_changelog(
