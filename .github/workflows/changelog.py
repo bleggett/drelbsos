@@ -115,7 +115,7 @@ def get_tags(target: str, manifests: dict[str, Any]):
     first = next(iter(manifests.values()))
     for tag in first["RepoTags"]:
         # Tags ending with .0 should not exist
-        if tag.endswith(".0"):
+        if re.match(r'.*\.\d$', tag):
             continue
         if target != "stable":
             if re.match(OTHER_START_PATTERN(target), tag):
