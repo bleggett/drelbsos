@@ -8,7 +8,7 @@ from collections import defaultdict
 
 REGISTRY = "docker://ghcr.io/bleggett/"
 IMAGE_MATRIX = {
-    "base": ["nvidia", "nvidia-open"],
+    "base": ["nvidia-open"],
     "de": ["gnome"],
     "image_flavor": ["main"],
 }
@@ -51,7 +51,7 @@ From previous `{target}` version `{prev}` there have been the following changes.
 ### How to rebase
 For current users, type the following to rebase to this version:
 ```bash
-sudo rpm-ostree rebase ostree-image-signed:docker://ghcr.io/bleggett/drelbsos-gnome-{nvidia|nvidia-open}
+sudo rpm-ostree rebase ostree-image-signed:docker://ghcr.io/bleggett/drelbsos-gnome-nvidia-open
 ```
 """
 HANDWRITTEN_PLACEHOLDER = """\
