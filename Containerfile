@@ -48,6 +48,7 @@ RUN --mount=type=cache,dst=/var/cache/libdnf5 \
         hikariknight/looking-glass-kvmfr \
         rok/cdemu \
         rodoma92/rmlint \
+        barsnick/non-fed \
         ilyaz/LACT; \
     do \
         echo "Enabling copr: $copr"; \
@@ -223,6 +224,7 @@ RUN --mount=type=cache,dst=/var/cache \
         gstreamer1-plugins-ugly \
         gstreamer1-plugins-bad \
         gstreamer1-plugins-good-extras \
+        cyanrip \
         wlr-randr && \
     mkdir -p /etc/xdg/autostart && \
     sed -i 's/ --xdg-runtime=\\"${XDG_RUNTIME_DIR}\\"//g' /usr/bin/btrfs-assistant-launcher && \
