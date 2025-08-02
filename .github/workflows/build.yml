@@ -255,7 +255,7 @@ jobs:
         id: rechunk
         uses: hhd-dev/rechunk@v1.2.2
         with:
-          rechunk: 'ghcr.io/hhd-dev/rechunk:v1.2.1'
+          rechunk: 'ghcr.io/hhd-dev/rechunk:v1.2.2'
           ref: 'raw-img'
           prev-ref: '${{ steps.generate-prev-ref.outputs.ref }}'
           version: '${{ steps.generate-version.outputs.tag }}'
@@ -267,6 +267,9 @@ jobs:
             org.opencontainers.image.title=drelbsos
             org.opencontainers.image.url=https://github.com/bleggett/drelbsos
             org.universal-blue.pkg.kernel=<relver:kernel>
+            org.opencontainers.image.vendor=${{ github.repository_owner }}
+            org.fedoraproject.coreos.ostree.version=${{ steps.generate-version.outputs.tag }}
+
       
       # Generate tags after rechunker runs and checks the primary tag is not duplicated
       # If it is, rechunk will suffix it by .1, .2, etc and put it in steps.rechunk.outputs.version
