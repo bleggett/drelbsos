@@ -227,7 +227,11 @@ RUN --mount=type=cache,dst=/var/cache \
         cyanrip \
         sway \
         waybar \
+        fuzzel \
         alacritty \
+        pavucontrol \
+        wev \
+        thunar \
         wlr-randr && \
     mkdir -p /etc/xdg/autostart && \
     sed -i 's/ --xdg-runtime=\\"${XDG_RUNTIME_DIR}\\"//g' /usr/bin/btrfs-assistant-launcher && \
