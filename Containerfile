@@ -226,6 +226,7 @@ RUN --mount=type=cache,dst=/var/cache \
         gstreamer1-plugins-good-extras \
         cyanrip \
         sway \
+        swayidle \
         waybar \
         fuzzel \
         alacritty \
