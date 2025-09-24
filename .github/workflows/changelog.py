@@ -42,6 +42,7 @@ From previous `{target}` version `{prev}` there have been the following changes.
 | Name | Version |
 | --- | --- |
 | **Kernel** | {pkgrel:kernel} |
+| **Sway** | {pkgrel:sway} |
 | **Gnome** | {pkgrel:gnome-control-center-filesystem} |
 | **Mutter** | {pkgrel:mutter} |
 | **NVIDIA drivers** | {pkgrel:nvidia-driver} |
