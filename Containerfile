@@ -49,6 +49,7 @@ RUN --mount=type=cache,dst=/var/cache/libdnf5 \
         rok/cdemu \
         rodoma92/rmlint \
         barsnick/non-fed \
+        erikreider/SwayNotificationCenter \
         ilyaz/LACT; \
     do \
         echo "Enabling copr: $copr"; \
@@ -233,6 +234,7 @@ RUN --mount=type=cache,dst=/var/cache \
         pavucontrol \
         wev \
         thunar \
+        SwayNotificationCenter \
         wlr-randr && \
     mkdir -p /etc/xdg/autostart && \
     sed -i 's/ --xdg-runtime=\\"${XDG_RUNTIME_DIR}\\"//g' /usr/bin/btrfs-assistant-launcher && \
@@ -286,6 +288,7 @@ RUN --mount=type=cache,dst=/var/cache \
         hhd-dev/hhd \
         che/nerd-fonts \
         lizardbyte/beta \
+        erikreider/SwayNotificationCenter \
         hikariknight/looking-glass-kvmfr; \
     do \
         dnf5 -y copr disable $copr; \
