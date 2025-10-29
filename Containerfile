@@ -59,12 +59,12 @@ RUN --mount=type=cache,dst=/var/cache/libdnf5 \
     dnf5 config-manager addrepo --from-repofile="https://negativo17.org/repos/fedora-multimedia.repo" && \
     dnf5 config-manager setopt fedora-multimedia.priority=90 && \
     dnf5 -y install --nogpgcheck --repofrompath 'terra,https://repos.fyralabs.com/terra$releasever' terra-release{,-extras} && \
-    dnf5 -y config-manager addrepo --overwrite --from-repofile=https://download.opensuse.org/repositories/hardware:/razer/Fedora_$(rpm -E %fedora)/hardware:razer.repo && \
     dnf5 -y install \
         https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
         https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm && \
     sed -i 's@enabled=0@enabled=1@g' /etc/yum.repos.d/fedora-multimedia.repo && \
     dnf5 -y config-manager addrepo --from-repofile=https://negativo17.org/repos/fedora-rar.repo && \
+    dnf5 -y config-manager addrepo --from-repofile=https://negativo17.org/repos/fedora-steam.repo && \
     dnf5 -y config-manager addrepo --from-repofile=https://negativo17.org/repos/fedora-nvidia.repo && \
     # dnf5 -y config-manager setopt "*bazzite*".priority=1 && \
     dnf5 -y config-manager setopt "*akmods*".priority=2 && \
@@ -161,7 +161,7 @@ RUN --mount=type=cache,dst=/var/cache \
         cdemu-daemon \
         cdemu-client \
         gcdemu \
-        openrazer-daemon \
+        // TODO suse repo gone openrazer-daemon \
         egl-utils \
         ncdu \
         btrfs-assistant \
