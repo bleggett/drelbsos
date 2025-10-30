@@ -81,7 +81,7 @@ RUN --mount=type=cache,dst=/var/cache/libdnf5 \
 # Install kernel
 RUN --mount=type=cache,dst=/var/cache \
     --mount=type=cache,dst=/var/log \
-    --mount=type=tmpfs,dst=/tmp \
+    --mount=type=tmpfs,dst=/tmp:exec \
     --mount=type=bind,from=drelbs-kernel,src=/kernel-rpms,dst=/var/kernel-rpms \
     --mount=type=bind,from=drelbs-kernel,src=/kmod-rpms,dst=/var/akmods-rpms \
     --mount=type=bind,from=ctx,source=/,target=/ctx \
