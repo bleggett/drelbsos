@@ -66,6 +66,7 @@ RUN --mount=type=cache,dst=/var/cache/libdnf5 \
     dnf5 -y config-manager addrepo --from-repofile=https://negativo17.org/repos/fedora-rar.repo && \
     dnf5 -y config-manager addrepo --from-repofile=https://negativo17.org/repos/fedora-steam.repo && \
     dnf5 -y config-manager addrepo --from-repofile=https://negativo17.org/repos/fedora-nvidia.repo && \
+    dnf5 config-manager addrepo --from-repofile=https://openrazer.github.io/hardware:razer.repo && \
     # dnf5 -y config-manager setopt "*bazzite*".priority=1 && \
     dnf5 -y config-manager setopt "*akmods*".priority=2 && \
     dnf5 -y config-manager setopt "*terra*".priority=3 "*terra*".exclude="nerd-fonts topgrade" && \
@@ -80,10 +81,10 @@ RUN --mount=type=cache,dst=/var/cache/libdnf5 \
 # Install kernel
 RUN --mount=type=cache,dst=/var/cache \
     --mount=type=cache,dst=/var/log \
-    --mount=type=bind,from=drelbs-kernel,src=/kernel-rpms,dst=/tmp/kernel-rpms \
-    --mount=type=bind,from=drelbs-kernel,src=/kmod-rpms,dst=/tmp/akmods-rpms \
-    --mount=type=bind,from=ctx,source=/,target=/ctx \
     --mount=type=tmpfs,dst=/tmp \
+    --mount=type=bind,from=drelbs-kernel,src=/kernel-rpms,dst=/var/kernel-rpms \
+    --mount=type=bind,from=drelbs-kernel,src=/kmod-rpms,dst=/var/akmods-rpms \
+    --mount=type=bind,from=ctx,source=/,target=/ctx \
     /ctx/install-kernel-akmods && \
     dnf5 -y config-manager setopt "*rpmfusion*".enabled=0 && \
     dnf5 -y copr enable bieszczaders/kernel-cachyos-addons && \
@@ -161,7 +162,7 @@ RUN --mount=type=cache,dst=/var/cache \
         cdemu-daemon \
         cdemu-client \
         gcdemu \
-        // TODO suse repo gone openrazer-daemon \
+        openrazer-daemon \
         egl-utils \
         ncdu \
         btrfs-assistant \
@@ -194,7 +195,6 @@ RUN --mount=type=cache,dst=/var/cache \
         libratbag-ratbagd \
         libva-utils \
         lshw \
-        mesa-libxatracker \
         net-tools \
         nvme-cli \
         nvtop \
@@ -233,7 +233,6 @@ RUN --mount=type=cache,dst=/var/cache \
         alacritty \
         pavucontrol \
         wev \
-        thunar \
         SwayNotificationCenter \
         wlr-randr && \
     mkdir -p /etc/xdg/autostart && \
