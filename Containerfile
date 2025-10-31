@@ -113,7 +113,7 @@ RUN --mount=type=cache,dst=/var/cache \
     --mount=type=tmpfs,dst=/tmp \
     dnf5 -y remove \
         ublue-os-update-services \
-        # opensc \
+        opensc \
         # ffmpeg-free \
         # fdk-aac-free \
         # totem-video-thumbnailer \
@@ -225,6 +225,7 @@ RUN --mount=type=cache,dst=/var/cache \
         gstreamer1-plugins-ugly \
         gstreamer1-plugins-bad \
         gstreamer1-plugins-good-extras \
+        gnupg2-scdaemon \
         cyanrip \
         sway \
         swayidle \
