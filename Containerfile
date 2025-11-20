@@ -35,8 +35,6 @@ RUN --mount=type=cache,dst=/var/cache/libdnf5 \
     /ctx/unwrap && \
     dnf5 -y install dnf5-plugins && \
     for copr in \
-        # bazzite-org/bazzite \
-        # bazzite-org/bazzite-multilib \
         ublue-os/staging \
         ublue-os/akmods \
         bazzite-org/LatencyFleX \
@@ -67,11 +65,8 @@ RUN --mount=type=cache,dst=/var/cache/libdnf5 \
     dnf5 -y config-manager addrepo --from-repofile=https://negativo17.org/repos/fedora-steam.repo && \
     dnf5 -y config-manager addrepo --from-repofile=https://negativo17.org/repos/fedora-nvidia.repo && \
     dnf5 config-manager addrepo --from-repofile=https://openrazer.github.io/hardware:razer.repo && \
-    # dnf5 -y config-manager setopt "*bazzite*".priority=1 && \
     dnf5 -y config-manager setopt "*akmods*".priority=2 && \
     dnf5 -y config-manager setopt "*terra*".priority=3 "*terra*".exclude="nerd-fonts topgrade" && \
-    # dnf5 -y config-manager setopt "terra-mesa".enabled=true && \
-    # dnf5 -y config-manager setopt "terra-nvidia".enabled=false && \
     eval "$(/ctx/dnf5-setopt setopt '*fedora-multimedia*' priority=4 exclude='mesa-* *xone*')" && \
     dnf5 -y config-manager setopt "*rpmfusion*".priority=5 "*rpmfusion*".exclude="mesa-*" && \
     dnf5 -y config-manager setopt "*fedora*".exclude="mesa-* kernel-core-* kernel-modules-* kernel-uki-virt-*" && \
@@ -91,7 +86,6 @@ RUN --mount=type=cache,dst=/var/cache \
     dnf5 -y install \
         scx-scheds && \
     dnf5 -y copr disable bieszczaders/kernel-cachyos-addons && \
-    # dnf5 -y swap --repo copr:copr.fedorainfracloud.org:bazzite-org:bazzite bootc bootc && \
     /ctx/cleanup
 
 # Install codec stuff
@@ -114,9 +108,6 @@ RUN --mount=type=cache,dst=/var/cache \
     dnf5 -y remove \
         ublue-os-update-services \
         opensc \
-        # ffmpeg-free \
-        # fdk-aac-free \
-        # totem-video-thumbnailer \
         firefox \
         firefox-langpacks && \
     /ctx/cleanup
@@ -255,10 +246,6 @@ RUN --mount=type=cache,dst=/var/cache \
     --mount=type=bind,from=ctx,source=/,target=/ctx \
     --mount=type=tmpfs,dst=/tmp \
     dnf5 -y install \
-        # nautilus-gsconnect \
-        # gnome-randr-rust \
-        # gnome-shell-extension-appindicator \
-        # gnome-shell-extension-gsconnect \
         firewall-config \
         rom-properties-gtk3 && \
     /ctx/cleanup
@@ -271,7 +258,6 @@ RUN --mount=type=cache,dst=/var/cache \
     rm -f /etc/profile.d/toolbox.sh && \
     mkdir -p /var/tmp && chmod 1777 /var/tmp && \
     sed -i 's/#UserspaceHID.*/UserspaceHID=true/' /etc/bluetooth/input.conf && \
-    # sed -i "s/^SCX_SCHEDULER=.*/SCX_SCHEDULER=scx_bpfland/" /etc/default/scx && \
     rm -f /usr/lib/systemd/system/service.d/50-keep-warm.conf && \
     mkdir -p "/etc/profile.d/" && \
     ln -s "/usr/share/ublue-os/firstboot/launcher/login-profile.sh" \
