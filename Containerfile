@@ -70,7 +70,7 @@ RUN --mount=type=cache,dst=/var/cache/libdnf5 \
     # dnf5 -y config-manager setopt "*bazzite*".priority=1 && \
     dnf5 -y config-manager setopt "*akmods*".priority=2 && \
     dnf5 -y config-manager setopt "*terra*".priority=3 "*terra*".exclude="nerd-fonts topgrade" && \
-    dnf5 -y config-manager setopt "terra-mesa".enabled=true && \
+    # dnf5 -y config-manager setopt "terra-mesa".enabled=true && \
     dnf5 -y config-manager setopt "terra-nvidia".enabled=false && \
     eval "$(/ctx/dnf5-setopt setopt '*fedora-multimedia*' priority=4 exclude='mesa-* *xone*')" && \
     dnf5 -y config-manager setopt "*rpmfusion*".priority=5 "*rpmfusion*".exclude="mesa-*" && \
