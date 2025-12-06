@@ -177,6 +177,7 @@ RUN --mount=type=cache,dst=/var/cache \
         grub2-tools-extra \
         heif-pixbuf-loader \
         htop \
+        iperf3 \
         libavcodec \
         libcamera \
         libcamera-tools \
