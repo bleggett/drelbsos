@@ -61,7 +61,7 @@ NVIDIA_BASE_VERSION=${NVIDIA_AKMOD_VERSION%-*}
 
 dnf5 install -y \
     "${AKMODNV_PATH}"/kmods/kmod-nvidia-"${KERNEL_VERSION}"-"${NVIDIA_AKMOD_VERSION}".fc"${RELEASE_ARCH}".rpm \
-    nvidia-kmod-common-${NVIDIA_AKMOD_VERSION}.fc${NOARCH_RELEASE} \
+    nvidia-kmod-common-${NVIDIA_BASE_VERSION}-'[0-9]'.fc${RELEASE} \
     nvidia-modprobe-${NVIDIA_BASE_VERSION}-'[0-9]'.fc${RELEASE}
 
 dnf5 install -y \
