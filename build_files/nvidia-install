@@ -77,10 +77,6 @@ dnf5 install -y \
 ## nvidia post-install steps
 dnf5 -y config-manager setopt "fedora-nvidia".enabled=false
 
-# ensure kernel.conf matches NVIDIA_FLAVOR (which must be nvidia or nvidia-open)
-# kmod-nvidia-common defaults to 'nvidia-open' but this will match our akmod image
-sed -i "s/^MODULE_VARIANT=.*/MODULE_VARIANT=$KERNEL_MODULE_TYPE/" /etc/nvidia/kernel.conf
-
 # Universal Blue specific Initramfs fixes
 cp /etc/modprobe.d/nvidia-modeset.conf /usr/lib/modprobe.d/nvidia-modeset.conf
 # we must force driver load to fix black screen on boot for nvidia desktops
