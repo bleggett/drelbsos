@@ -198,6 +198,7 @@ RUN --mount=type=cache,dst=/var/cache \
         pipewire-libs-extra \
         pipewire-plugin-libcamera \
         powerstat \
+        lxpolkit \
         smartmontools \
         squashfs-tools \
         symlinks \
