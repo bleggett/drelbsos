@@ -263,12 +263,14 @@ jobs:
             org.opencontainers.image.created=<timestamp>
             org.opencontainers.image.licenses=Apache-2.0
             org.opencontainers.image.revision=${{ github.sha }}
-            org.opencontainers.image.source=https://github.com/bleggett/drelbsos
+            org.opencontainers.image.source=https://github.com/bleggett/drelbsos/blob/${{ github.sha }}/Containerfile
             org.opencontainers.image.title=drelbsos
-            org.opencontainers.image.url=https://github.com/bleggett/drelbsos
+            org.opencontainers.image.url=https://github.com/bleggett/drelbsos/tree/${{ github.sha }}
+            org.opencontainers.image.version=${{ steps.generate-version.outputs.tag }}
             org.universal-blue.pkg.kernel=<relver:kernel>
             org.opencontainers.image.vendor=${{ github.repository_owner }}
             org.fedoraproject.coreos.ostree.version=${{ steps.generate-version.outputs.tag }}
+            containers.bootc=1
 
       
       # Generate tags after rechunker runs and checks the primary tag is not duplicated
