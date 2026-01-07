@@ -107,7 +107,6 @@ RUN --mount=type=cache,dst=/var/cache \
     --mount=type=tmpfs,dst=/tmp \
     dnf5 -y remove \
         ublue-os-update-services \
-        opensc \
         firefox \
         firefox-langpacks && \
     /ctx/cleanup
@@ -218,7 +217,7 @@ RUN --mount=type=cache,dst=/var/cache \
         gstreamer1-plugins-ugly \
         gstreamer1-plugins-bad \
         gstreamer1-plugins-good-extras \
-        gnupg2-scdaemon \
+        openssh-askpass \
         cyanrip \
         sway \
         swayidle \
