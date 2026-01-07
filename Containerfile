@@ -224,6 +224,7 @@ RUN --mount=type=cache,dst=/var/cache \
         waybar \
         fuzzel \
         alacritty \
+        mediawriter \
         pavucontrol \
         wev \
         SwayNotificationCenter \
