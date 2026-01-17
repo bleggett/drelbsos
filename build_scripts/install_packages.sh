@@ -10,15 +10,15 @@ dnf5 -y remove \
     firefox \
     firefox-langpacks
 
-dnf5 -y install --enable-repo="*rpmfusion*" --disable-repo="*fedora-multimedia*" \
-    libaacs \
-    libbdplus \
-    libbluray \
-    libbluray-utils \
-    fdk-aac \
-    ffmpeg-libs \
-    ffmpegthumbnailer \
-    ffmpeg
+# dnf5 -y install --enable-repo="*rpmfusion*" --disable-repo="*fedora-multimedia*" \
+#     libaacs \
+#     libbdplus \
+#     libbluray \
+#     libbluray-utils \
+#     fdk-aac \
+#     ffmpeg-libs \
+#     ffmpegthumbnailer \
+#     ffmpeg
 
 dnf5 -y install \
     twitter-twemoji-fonts \
@@ -40,6 +40,14 @@ dnf5 -y install \
     webapp-manager \
     zsh \
     btop \
+    libaacs \
+    libbdplus \
+    libbluray \
+    libbluray-utils \
+    fdk-aac \
+    ffmpeg-libs \
+    ffmpegthumbnailer \
+    ffmpeg
     xdotool \
     wmctrl \
     libcec \
@@ -129,19 +137,13 @@ dnf5 -y install \
     pavucontrol \
     wev \
     SwayNotificationCenter \
+    firewall-config \
+    rom-properties-gtk3
     wlr-randr && \
-mkdir -p /etc/xdg/autostart && \
-sed -i 's/ --xdg-runtime=\\"${XDG_RUNTIME_DIR}\\"//g' /usr/bin/btrfs-assistant-launcher && \
-curl -Lo /usr/bin/installcab https://raw.githubusercontent.com/bazzite-org/steam-proton-mf-wmv/master/installcab.py && \
-chmod +x /usr/bin/installcab && \
-curl -Lo /usr/bin/install-mf-wmv https://github.com/bazzite-org/steam-proton-mf-wmv/blob/master/install-mf-wmv.sh && \
-chmod +x /usr/bin/install-mf-wmv && \
+
+# Random binaries
 curl -Lo /tmp/ls-iommu.tar.gz $(curl https://api.github.com/repos/HikariKnight/ls-iommu/releases/latest | jq -r '.assets[] | select(.name| test(".*x86_64.tar.gz$")).browser_download_url') && \
 mkdir -p /tmp/ls-iommu && \
 tar --no-same-owner --no-same-permissions --no-overwrite-dir -xvzf /tmp/ls-iommu.tar.gz -C /tmp/ls-iommu && \
 rm -f /tmp/ls-iommu.tar.gz && \
-cp -r /tmp/ls-iommu/ls-iommu /usr/bin/ && \
-
-dnf5 -y install \
-    firewall-config \
-    rom-properties-gtk3
+cp -r /tmp/ls-iommu/ls-iommu /usr/bin/
