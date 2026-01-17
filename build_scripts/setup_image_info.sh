@@ -12,16 +12,14 @@ DOCUMENTATION_URL="https://github.com/bleggett/drelbsos"
 SUPPORT_URL="https://github.com/bleggett/drelbsos"
 BUG_SUPPORT_URL="https://github.com/bleggett/drelbsos"
 CODE_NAME="Trollaboar"
-BASE_IMAGE_NAME="silverblue"
+BASE_IMAGE_NAME="bootc"
+IMAGE_VENDOR="drelbszoomer"
 
-IMAGE_REF="ostree-image-signed:docker://ghcr.io/$IMAGE_VENDOR/$IMAGE_NAME"
 IMAGE_BRANCH_NORMALIZED=$IMAGE_BRANCH
 
 if [[ $IMAGE_BRANCH_NORMALIZED == "main" ]]; then
   IMAGE_BRANCH_NORMALIZED="stable"
 fi
-
-FEDORA_VERSION=$(rpm -E %fedora)
 
 # OS Release File
 sed -i "s/^VARIANT_ID=.*/VARIANT_ID=$IMAGE_NAME/" /usr/lib/os-release

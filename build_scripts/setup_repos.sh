@@ -40,5 +40,3 @@ dnf5 config-manager addrepo --from-repofile=https://openrazer.github.io/hardware
 dnf5 -y config-manager setopt "*akmods*".priority=2 && \
 dnf5 -y config-manager setopt "*terra*".priority=3 && \
 dnf5 -y config-manager setopt "*fedora-multimedia*".priority=4
-# dnf5 -y config-manager setopt "*fedora*".exclude="mesa-* kernel-core-* kernel-modules-* kernel-uki-virt-*" && \
-# dnf5 -y config-manager setopt "*staging*".exclude="scx-scheds kf6-* mesa* mutter* rpm-ostree* systemd* gnome-shell gnome-settings-daemon gnome-control-center gnome-software libadwaita tuned*"

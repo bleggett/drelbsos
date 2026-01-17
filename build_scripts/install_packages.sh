@@ -5,21 +5,6 @@ set -ouex pipefail
 echo "::group::Executing install_packages"
 trap 'echo "::endgroup::"' EXIT
 
-dnf5 -y remove \
-    ublue-os-update-services \
-    firefox \
-    firefox-langpacks
-
-# dnf5 -y install --enable-repo="*rpmfusion*" --disable-repo="*fedora-multimedia*" \
-#     libaacs \
-#     libbdplus \
-#     libbluray \
-#     libbluray-utils \
-#     fdk-aac \
-#     ffmpeg-libs \
-#     ffmpegthumbnailer \
-#     ffmpeg
-
 dnf5 -y install \
     twitter-twemoji-fonts \
     lato-fonts \
@@ -40,14 +25,12 @@ dnf5 -y install \
     webapp-manager \
     zsh \
     btop \
-    libaacs \
-    libbdplus \
     libbluray \
     libbluray-utils \
     fdk-aac \
     ffmpeg-libs \
     ffmpegthumbnailer \
-    ffmpeg
+    ffmpeg \
     xdotool \
     wmctrl \
     libcec \
@@ -138,7 +121,7 @@ dnf5 -y install \
     wev \
     SwayNotificationCenter \
     firewall-config \
-    rom-properties-gtk3
+    rom-properties-gtk3 \
     wlr-randr && \
 
 # Random binaries
