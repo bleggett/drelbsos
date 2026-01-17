@@ -1,0 +1,3 @@
+docker:
+    ghcr.io/bleggett:
+        use-sigstore-attachments: true
