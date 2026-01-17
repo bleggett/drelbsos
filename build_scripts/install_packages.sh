@@ -14,7 +14,11 @@ dnf5 -y install --enable-repo="*rpmfusion*" --disable-repo="*fedora-multimedia*"
     libaacs \
     libbdplus \
     libbluray \
-    libbluray-utils
+    libbluray-utils \
+    fdk-aac \
+    ffmpeg-libs \
+    ffmpegthumbnailer \
+    ffmpeg
 
 dnf5 -y install \
     twitter-twemoji-fonts \
@@ -66,10 +70,6 @@ dnf5 -y install \
     alsa-firmware \
     android-udev-rules \
     distrobox \
-    fdk-aac \
-    ffmpeg \
-    ffmpeg-libs \
-    ffmpegthumbnailer \
     flatpak-spawn \
     fuse \
     fzf \
