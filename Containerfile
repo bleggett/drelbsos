@@ -11,7 +11,6 @@ ARG BASE_IMAGE="quay.io/${SOURCE_ORG}/${SOURCE_IMAGE}"
 
 FROM scratch AS ctx
 COPY build_scripts /scripts
-COPY overlay_files/ /
 
 FROM ghcr.io/bleggett/drelbsos-kernel:${FEDORA_MAJOR_VERSION} as drelbs-kernel
 FROM ${BASE_IMAGE}:${FEDORA_MAJOR_VERSION} AS drelbsos
@@ -25,6 +24,7 @@ ARG SHA_HEAD_SHORT="${SHA_HEAD_SHORT}"
 ARG VERSION_TAG="${VERSION_TAG}"
 ARG VERSION_PRETTY="${VERSION_PRETTY}"
 
+COPY overlay_files /
 
 # Setup Copr repos
 RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
