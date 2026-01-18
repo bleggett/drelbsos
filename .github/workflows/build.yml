@@ -184,3 +184,12 @@ jobs:
           TAGS: ${{ steps.push.outputs.digest }}
           COSIGN_EXPERIMENTAL: false
           COSIGN_PRIVATE_KEY: ${{ secrets.SIGNING_SECRET }}
+
+  generate_release:
+    name: Generate Release
+    needs: [build_push]
+    if: github.event_name != 'pull_request'
+    secrets: inherit
+    permissions:
+      contents: write  # Required for creating releases
+    uses: ./.github/workflows/generate-release.yml
