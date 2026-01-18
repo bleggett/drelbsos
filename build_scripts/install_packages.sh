@@ -122,6 +122,20 @@ dnf5 -y install \
     wev \
     SwayNotificationCenter \
     firewall-config \
+    gdm \
+    alsa-utils \
+    bc \
+    hdparm \
+    nautilus \
+    nautilus-extensions \
+    pipwire-utils \
+    rsync \
+    tuned \
+    wget \
+    curl \
+    flatpack \
+    gnome-software \
+    gamemode \
     rom-properties-gtk3 \
     wlr-randr && \
 
