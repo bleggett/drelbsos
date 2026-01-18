@@ -128,12 +128,11 @@ dnf5 -y install \
     hdparm \
     nautilus \
     nautilus-extensions \
-    pipwire-utils \
+    pipewire-utils \
     rsync \
     tuned \
     wget \
-    curl \
-    flatpack \
+    flatpak \
     gnome-software \
     gamemode \
     rom-properties-gtk3 \
