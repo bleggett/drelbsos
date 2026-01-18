@@ -107,25 +107,24 @@ def get_manifests(target: str):
 
 
 def get_tags(target: str, manifests: dict[str, Any]):
-    tags = set()
+    """Get the current and previous tags to compare.
 
-    # Select random manifest to get reference tags from
+    Finds all stable version tags and returns the two most recent ones.
+    """
+    tags = []
+
+    # Get all stable tags from the first manifest
     first = next(iter(manifests.values()))
     for tag in first["RepoTags"]:
-        # Tags ending with .0 should not exist
-        if re.match(r'.*\.\d$', tag):
-            continue
         if re.match(STABLE_START_PATTERN, tag):
-            tags.add(tag)
+            tags.append(tag)
 
-    # Remove tags not present in all images
-    # for manifest in manifests.values():
-    #     for tag in list(tags):
-    #         if tag not in manifest["RepoTags"]:
-    #             tags.remove(tag)
+    tags = sorted(tags)
 
-    tags = list(sorted(tags))
-    assert len(tags) > 2, "No current and previous tags found"
+    if len(tags) < 2:
+        raise ValueError(f"Need at least 2 stable tags to generate changelog, found {len(tags)}")
+
+    # Return the two most recent tags
     return tags[-2], tags[-1]
 
 
@@ -359,7 +358,7 @@ def main():
     import argparse
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("target", help="Target tag")
+    parser.add_argument("target", help="Target branch or tag (e.g., main)")
     parser.add_argument("output", help="Output environment file")
     parser.add_argument("changelog", help="Output changelog file")
     parser.add_argument("--pretty", help="Subject for the changelog")
@@ -367,17 +366,21 @@ def main():
     parser.add_argument("--handwritten", help="Handwritten changelog")
     args = parser.parse_args()
 
-    # Remove refs/tags, refs/heads, refs/remotes e.g.
-    # Tags cannot include / anyway.
+    # Remove refs/tags, refs/heads, refs/remotes prefixes
     target = args.target.split('/')[-1]
 
+    # Get manifests for the most recent image
     manifests = get_manifests(target)
+
+    # Find the two most recent stable version tags
     prev, curr = get_tags(target, manifests)
-    # curr = args.new_target
     print(f"Previous tag: {prev}")
     print(f"Current tag: {curr}")
 
+    # Get manifests for the previous version
     prev_manifests = get_manifests(prev)
+
+    # Generate changelog comparing previous to current
     title, changelog = generate_changelog(
         args.handwritten,
         target,
