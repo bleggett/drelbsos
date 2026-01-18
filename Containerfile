@@ -60,7 +60,8 @@ RUN --mount=type=cache,dst=/var/cache \
     --mount=type=tmpfs,dst=/tmp \
     /ctx/scripts/prep_system.sh && \
     /ctx/scripts/setup_image_info.sh && \
-    /ctx/scripts/build_initramfs.sh && \
-    /ctx/scripts/final_clean.sh
+    /ctx/scripts/build_initramfs.sh
 
-RUN bootc container lint
+RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
+    /ctx/scripts/final_clean.sh && \
+    bootc container lint
