@@ -10,7 +10,7 @@ REGISTRY = "docker://ghcr.io/bleggett/"
 IMAGE_MATRIX = {
     "base": [""],
     "de": [""],
-    "image_flavor": ["43"],
+    "image_flavor": [""],
 }
 
 RETRIES = 3
@@ -314,7 +314,7 @@ def generate_changelog(
         # Remove target- from curr
         curr_pretty = re.sub(rf"^[a-z]+-", "", curr_pretty)
         pretty = target.capitalize() + " (F" + curr_pretty
-        if finish and target != "stable":
+        if finish and target != "main":
             pretty += ", #" + finish[:7]
         pretty += ")"
 
@@ -370,9 +370,6 @@ def main():
     # Remove refs/tags, refs/heads, refs/remotes e.g.
     # Tags cannot include / anyway.
     target = args.target.split('/')[-1]
-
-    if target == "main":
-        target = "stable"
 
     manifests = get_manifests(target)
     prev, curr = get_tags(target, manifests)

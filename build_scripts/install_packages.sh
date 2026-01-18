@@ -101,6 +101,7 @@ dnf5 -y install \
     xhost \
     xorg-x11-xauth \
     yubikey-manager \
+    yubico-piv-tool \
     zstd \
     adw-gtk3-theme \
     gvfs-nfs \

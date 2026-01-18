@@ -24,9 +24,6 @@ jobs:
         run: |
           TARGET="${{ github.event.inputs.target || github.ref }}"
           TARGET="${TARGET##*/}"
-          if [ "$TARGET" = "main" ]; then
-            TARGET="stable"
-          fi
           echo "target=$TARGET" >> $GITHUB_OUTPUT
       
       - name: Generate Release Text
@@ -45,5 +42,5 @@ jobs:
           name: ${{ steps.generate-release.outputs.title }}
           tag_name: ${{ steps.generate-release.outputs.tag }}
           body_path: ./changelog.md
-          make_latest: ${{ steps.get-target.outputs.target == 'stable' }}
-          prerelease: ${{ steps.get-target.outputs.target != 'stable' }}
+          make_latest: ${{ steps.get-target.outputs.target == 'main' }}
+          prerelease: ${{ steps.get-target.outputs.target != 'main' }}
