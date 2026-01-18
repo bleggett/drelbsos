@@ -38,5 +38,5 @@ dnf5 -y config-manager addrepo --from-repofile=https://negativo17.org/repos/fedo
 dnf5 -y config-manager addrepo --from-repofile=https://negativo17.org/repos/fedora-nvidia.repo && \
 dnf5 config-manager addrepo --from-repofile=https://openrazer.github.io/hardware:razer.repo && \
 dnf5 -y config-manager setopt "*akmods*".priority=2 && \
-dnf5 -y config-manager setopt "*terra*".priority=3 && \
+dnf5 -y config-manager setopt "*terra*".priority=3 "*terra*".exclude="nerd-fonts" && \
 dnf5 -y config-manager setopt "*fedora-multimedia*".priority=4
