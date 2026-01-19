@@ -134,8 +134,10 @@ dnf5 -y install \
     wget \
     flatpak \
     gnome-software \
+    gnome-disk-utility \
     gamemode \
     rom-properties-gtk3 \
+    regreet \
     wlr-randr && \
 
 # Random binaries
