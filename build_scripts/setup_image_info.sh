@@ -15,12 +15,6 @@ CODE_NAME="Trollaboar"
 BASE_IMAGE_NAME="bootc"
 IMAGE_VENDOR="drelbszoomer"
 
-IMAGE_BRANCH_NORMALIZED=$IMAGE_BRANCH
-
-if [[ $IMAGE_BRANCH_NORMALIZED == "main" ]]; then
-  IMAGE_BRANCH_NORMALIZED="stable"
-fi
-
 # OS Release File
 sed -i "s/^VARIANT_ID=.*/VARIANT_ID=$IMAGE_NAME/" /usr/lib/os-release
 sed -i "s/^PRETTY_NAME=.*/PRETTY_NAME=\"DrelbsOS $FEDORA_MAJOR_VERSION (FROM Fedora ${BASE_IMAGE_NAME^})\"/" /usr/lib/os-release
