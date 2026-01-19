@@ -92,6 +92,7 @@ jobs:
             --build-arg IMAGE_NAME=${{ env.IMAGE_NAME }} \
             --build-arg FEDORA_MAJOR_VERSION=${{ env.FEDORA_MAJOR_VERSION }} \
             --build-arg IMAGE_BRANCH=${{ github.ref_name }} \
+            --build-arg IMAGE_BUILDID=${{ steps.generate-version.outputs.tag }} \
             --tag raw-img .
 
       # Generate the previous image reference used by the Rechunker

@@ -35,9 +35,9 @@ sed -i "s/^ID=fedora/ID=${IMAGE_PRETTY_NAME,,}\nID_LIKE=\"${IMAGE_LIKE}\"/" /usr
 sed -i "/^REDHAT_BUGZILLA_PRODUCT=/d; /^REDHAT_BUGZILLA_PRODUCT_VERSION=/d; /^REDHAT_SUPPORT_PRODUCT=/d; /^REDHAT_SUPPORT_PRODUCT_VERSION=/d" /usr/lib/os-release
 sed -i "s|^VERSION_CODENAME=.*|VERSION_CODENAME=\"$CODE_NAME\"|" /usr/lib/os-release
 
-echo "BUILD_ID=\"$VERSION_PRETTY\"" >> /usr/lib/os-release
+echo "BUILD_ID=\"$IMAGE_BUILDID\"" >> /usr/lib/os-release
 
-echo "BOOTLOADER_NAME=\"$IMAGE_PRETTY_NAME $VERSION_PRETTY\"" >> /usr/lib/os-release
+echo "BOOTLOADER_NAME=\"$IMAGE_PRETTY_NAME $IMAGE_BUILDID\"" >> /usr/lib/os-release
 
 # Fix issues caused by ID no longer being fedora
 sed -i "s/^EFIDIR=.*/EFIDIR=\"fedora\"/" /usr/sbin/grub2-switch-to-blscfg
