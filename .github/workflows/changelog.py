@@ -47,10 +47,15 @@ From previous `{target}` version `{prev}` there have been the following changes.
 
 {changes}
 
-### How to rebase
-For current users, type the following to rebase to this version:
+### How to update
+For current DrelbsOS users, type the following to switch to this version:
 ```bash
-sudo rpm-ostree rebase ostree-image-signed:docker://ghcr.io/bleggett/drelbsos
+sudo bootc upgrade
+```
+### How to switch
+For bootc users, type the following to switch to this version:
+```bash
+sudo bootc switch ghcr.io/bleggett/drelbsos:43
 ```
 """
 HANDWRITTEN_PLACEHOLDER = """\

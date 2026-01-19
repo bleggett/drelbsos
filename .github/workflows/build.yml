@@ -216,16 +216,6 @@ jobs:
           COSIGN_EXPERIMENTAL: false
           COSIGN_PRIVATE_KEY: ${{ secrets.SIGNING_SECRET }}
 
-      # - name: Sign container image
-      #   uses: EyeCantCU/cosign-action/sign@v0.3.0
-      #   if: github.event_name != 'pull_request'
-      #   with:
-      #     containers: ${{ env.IMAGE_NAME }}
-      #     registry-token: ${{ secrets.GITHUB_TOKEN }}
-      #     signing-secret: ${{ secrets.SIGNING_SECRET }}
-      #     tags: ${{ steps.generate-tags.outputs.alias_tags }}
-      #     registry: ${{ env.IMAGE_REGISTRY }}
-
   generate_release:
     name: Generate Release
     needs: [push-ghcr]
