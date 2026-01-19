@@ -30,7 +30,7 @@ OTHER_NAMES = {
 }
 
 COMMITS_FORMAT = "### Commits\n| Hash | Subject |\n| --- | --- |{commits}\n\n"
-COMMIT_FORMAT = "\n| **[{short}](https://github.com/bleggett/drelbsos-v2/commit/{hash})** | {subject} |"
+COMMIT_FORMAT = "\n| **[{short}](https://github.com/bleggett/drelbsos/commit/{hash})** | {subject} |"
 
 CHANGELOG_TITLE = "{tag}: {pretty}"
 CHANGELOG_FORMAT = """\
@@ -50,7 +50,7 @@ From previous `{target}` version `{prev}` there have been the following changes.
 ### How to rebase
 For current users, type the following to rebase to this version:
 ```bash
-sudo rpm-ostree rebase ostree-image-signed:docker://ghcr.io/bleggett/drelbsos-v2
+sudo rpm-ostree rebase ostree-image-signed:docker://ghcr.io/bleggett/drelbsos
 ```
 """
 HANDWRITTEN_PLACEHOLDER = """\
@@ -68,7 +68,7 @@ BLACKLIST_VERSIONS = [
 
 def get_images():
     for base, de, image_flavor in product(*IMAGE_MATRIX.values()):
-        img = "drelbsos-v2"
+        img = "drelbsos"
         if de == "gnome":
             img += "-gnome"
 
