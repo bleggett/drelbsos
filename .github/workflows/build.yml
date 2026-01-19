@@ -182,15 +182,41 @@ jobs:
               sudo skopeo copy ${{ steps.rechunk.outputs.ref }} docker://${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAME }}:$tag
             done
 
-      - name: Sign container image
-        uses: EyeCantCU/cosign-action/sign@v0.3.0
+      - name: Get Image Digest
+        id: digest
+        run: |
+          # Get digest for signing
+          DIGEST=$(sudo skopeo inspect --format '{{.Digest}}' ${{ steps.rechunk.outputs.ref }})
+          echo "Digest is: $DIGEST"
+          echo "digest=${DIGEST}" >> $GITHUB_OUTPUT
+
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@faadad0cce49287aee09b3a48701e75088a2c6ad # v4.0.0
         if: github.event_name != 'pull_request'
         with:
-          containers: ${{ env.IMAGE_NAME }}
-          registry-token: ${{ secrets.GITHUB_TOKEN }}
-          signing-secret: ${{ secrets.SIGNING_SECRET }}
-          tags: ${{ steps.generate-tags.outputs.alias_tags }}
-          registry: ${{ env.IMAGE_REGISTRY }}
+          cosign-release: 'v2.6.1'
+
+      - name: Sign container image
+        if: github.event_name != 'pull_request'
+        run: |
+          IMAGE_FULL="${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAME }}"
+          for tag in ${{ steps.generate-tags.outputs.alias_tags }}; do
+            cosign sign -y --key env://COSIGN_PRIVATE_KEY $IMAGE_FULL:$tag
+          done
+        env:
+          TAGS: ${{ steps.digest.outputs.digest }}
+          COSIGN_EXPERIMENTAL: false
+          COSIGN_PRIVATE_KEY: ${{ secrets.SIGNING_SECRET }}
+
+      # - name: Sign container image
+      #   uses: EyeCantCU/cosign-action/sign@v0.3.0
+      #   if: github.event_name != 'pull_request'
+      #   with:
+      #     containers: ${{ env.IMAGE_NAME }}
+      #     registry-token: ${{ secrets.GITHUB_TOKEN }}
+      #     signing-secret: ${{ secrets.SIGNING_SECRET }}
+      #     tags: ${{ steps.generate-tags.outputs.alias_tags }}
+      #     registry: ${{ env.IMAGE_REGISTRY }}
 
   generate_release:
     name: Generate Release
