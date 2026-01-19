@@ -37,8 +37,6 @@ systemctl enable input-remapper.service && \
 systemctl enable dev-hugepages1G.mount && \
 systemctl --global enable podman.socket && \
 systemctl --global enable systemd-tmpfiles-setup.service && \
-# sed -i 's@\[Desktop Entry\]@\[Desktop Entry\]\nNoDisplay=true@g' /usr/share/applications/yad-icon-browser.desktop && \
-# sed -i '/^PRETTY_NAME/s/Bazzite/DrelbsOS/' /usr/lib/os-release && \
 curl -Lo /etc/dxvk-example.conf https://raw.githubusercontent.com/doitsujin/dxvk/master/dxvk.conf
 
 # Fix sway.desktop not launching for nvidia:

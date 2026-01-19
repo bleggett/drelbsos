@@ -140,7 +140,6 @@ dnf5 -y install \
     glibc-all-langpacks \
     google-noto-sans-jp-fonts \
     rom-properties-gtk3 \
-    regreet \
     wlr-randr && \
 
 # Random binaries

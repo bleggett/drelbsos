@@ -20,7 +20,6 @@ for copr in \
     rodoma92/rmlint \
     barsnick/non-fed \
     erikreider/SwayNotificationCenter \
-    binarypie/hypercube \
     ilyaz/LACT; \
 do \
     echo "Enabling copr: $copr"; \

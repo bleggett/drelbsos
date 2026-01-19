@@ -1,7 +1,6 @@
 ARG IMAGE_BRANCH="${IMAGE_BRANCH:-main}"
 ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-43}"
 
-# ARG BASE_IMAGE="quay.io/fedora-ostree-desktops/silverblue"
 ARG BASE_IMAGE="quay.io/fedora/fedora-bootc"
 
 FROM scratch AS ctx
@@ -14,8 +13,6 @@ ARG IMAGE_NAME="${IMAGE_NAME:-drelbsos}"
 ARG IMAGE_BRANCH="${IMAGE_BRANCH:-main}"
 ARG IMAGE_BUILDID="${IMAGE_BUILDID}"
 ARG FEDORA_MAJOR_VERSION="${FEDORA_MAJOR_VERSION:-43}"
-
-COPY overlay_files /
 
 # Setup Copr repos
 RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
@@ -39,6 +36,9 @@ RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
     --mount=type=cache,dst=/var/log \
     --mount=type=tmpfs,dst=/tmp \
     /ctx/scripts/install_packages.sh
+
+# Some of these overlay package files, so need to do them post-package-install.
+COPY overlay_files /
 
 # Setup nvidia drivers
 RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
