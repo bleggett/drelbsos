@@ -52,7 +52,10 @@ jobs:
           # E.G: 2022-02-08T15:38:15Z'
           # https://artifacthub.io/docs/topics/repositories/container-images/
           # https://linux.die.net/man/1/date
-          echo "date=$(date -u +%Y\-%m\-%d\T%H\:%M\:%S\Z)" >> $GITHUB_OUTPUT
+          TIMESTAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          echo "date=$TIMESTAMP" >> $GITHUB_OUTPUT
+          # However, OCI *tags* do not like this format,so munge for that usage.
+          echo "date_tag=${TIMESTAMP//:/-}" >> $GITHUB_OUTPUT
 
       # Checkout push-to-registry action GitHub repository
       - name: Checkout Push to Registry action
@@ -77,7 +80,7 @@ jobs:
         run: |
           # Generate the primary version key that will be stored on os-release,
           # shown on the bootloader, and used for the image tag.
-          VERSION="${FEDORA_MAJOR_VERSION}.${{ steps.date.outputs.date }}"
+          VERSION="${FEDORA_MAJOR_VERSION}.${{ steps.date.outputs.date_tag }}"
 
           echo "tag=${VERSION}" >> $GITHUB_OUTPUT
 
