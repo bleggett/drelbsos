@@ -138,7 +138,7 @@ dnf5 -y install \
     gamemode \
     git \
     glibc-all-langpacks \
-    google-noto-fonts-all \
+    google-noto-sans-jp-fonts \
     rom-properties-gtk3 \
     regreet \
     wlr-randr && \
