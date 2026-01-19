@@ -40,3 +40,6 @@ systemctl --global enable systemd-tmpfiles-setup.service && \
 # sed -i 's@\[Desktop Entry\]@\[Desktop Entry\]\nNoDisplay=true@g' /usr/share/applications/yad-icon-browser.desktop && \
 # sed -i '/^PRETTY_NAME/s/Bazzite/DrelbsOS/' /usr/lib/os-release && \
 curl -Lo /etc/dxvk-example.conf https://raw.githubusercontent.com/doitsujin/dxvk/master/dxvk.conf
+
+# Fix sway.desktop not launching for nvidia:
+sed -i 's/Exec=sway$/Exec=sway --unsupported-gpu/' /usr/share/wayland-sessions/sway.desktop
