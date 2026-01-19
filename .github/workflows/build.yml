@@ -197,7 +197,7 @@ jobs:
           containers: ${{ env.IMAGE_NAME }}
           registry-token: ${{ secrets.GITHUB_TOKEN }}
           signing-secret: ${{ secrets.SIGNING_SECRET }}
-          tags: ${{ steps.digest.outputs.digest }}
+          tags: ${{ steps.generate-tags.outputs.alias_tags }}
           registry: ${{ env.IMAGE_REGISTRY }}
 
   generate_release:
