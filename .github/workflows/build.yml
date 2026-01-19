@@ -221,4 +221,6 @@ jobs:
     needs: [push-ghcr]
     if: github.event_name != 'pull_request'
     secrets: inherit
+    permissions:
+      contents: write  # Required for creating releases
     uses: ./.github/workflows/generate-release.yml
