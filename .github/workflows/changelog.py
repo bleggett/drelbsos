@@ -116,6 +116,9 @@ def get_tags(target: str, manifests: dict[str, Any]):
     # Get all stable tags from the first manifest
     first = next(iter(manifests.values()))
     for tag in first["RepoTags"]:
+        # Skip old YYYYMMDD format tags (e.g., 43.20260117)
+        if re.match(r'^\d+\.\d{8}$', tag):
+            continue
         if re.match(STABLE_START_PATTERN, tag):
             tags.append(tag)
 
