@@ -140,9 +140,9 @@ jobs:
       # Reprocess raw-img using rechunker which will delete it
       - name: Run Rechunker
         id: rechunk
-        uses: hhd-dev/rechunk@v1.2.4
+        uses: hhd-dev/rechunk@v1.2.2
         with:
-          rechunk: 'ghcr.io/hhd-dev/rechunk:v1.2.4'
+          rechunk: 'ghcr.io/hhd-dev/rechunk:v1.2.2'
           ref: 'raw-img'
           prev-ref: '${{ steps.generate-prev-ref.outputs.ref }}'
           version: '${{ steps.generate-version.outputs.tag }}'
@@ -167,6 +167,15 @@ jobs:
             io.artifacthub.package.prerelease=false
             containers.bootc=1
 
+      # Debug: Check if rechunk.info label exists in local image
+      - name: Debug - Inspect local image labels
+        run: |
+          echo "Inspecting local OCI image for dev.hhd.rechunk.info label..."
+          sudo skopeo inspect ${{ steps.rechunk.outputs.ref }} > /tmp/local-image-inspect.json
+          echo "Label exists:" $(python3 -c "import sys, json; data=json.load(open('/tmp/local-image-inspect.json')); print('dev.hhd.rechunk.info' in data.get('Labels', {}))")
+          echo "Label value (first 200 chars):" $(python3 -c "import sys, json; data=json.load(open('/tmp/local-image-inspect.json')); print(data.get('Labels', {}).get('dev.hhd.rechunk.info', 'NOT FOUND')[:200])")
+          echo "All labels present:"
+          python3 -c "import sys, json; data=json.load(open('/tmp/local-image-inspect.json')); [print(f'  {k}') for k in sorted(data.get('Labels', {}).keys())]"
 
       # Generate tags after rechunker runs and checks the primary tag is not duplicated
       # If it is, rechunk will suffix it by .1, .2, etc and put it in steps.rechunk.outputs.version
