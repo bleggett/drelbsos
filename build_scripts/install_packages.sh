@@ -136,6 +136,9 @@ dnf5 -y install \
     gnome-software \
     gnome-disk-utility \
     gamemode \
+    git \
+    glibc-all-langpacks \
+    google-noto-fonts-all \
     rom-properties-gtk3 \
     regreet \
     wlr-randr && \
