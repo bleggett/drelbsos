@@ -137,6 +137,7 @@ dnf5 -y install \
     gnome-disk-utility \
     gamemode \
     git \
+    cups \
     glibc-all-langpacks \
     google-noto-sans-jp-fonts \
     rom-properties-gtk3 \

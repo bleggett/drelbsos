@@ -34,6 +34,7 @@ repos=$(dnf5 repo list --all | awk '/negativo17/ {print $1".enabled=0"}')
 mkdir -p /etc/flatpak/remotes.d && \
 curl -Lo /etc/flatpak/remotes.d/flathub.flatpakrepo https://dl.flathub.org/repo/flathub.flatpakrepo && \
 systemctl enable input-remapper.service && \
+systemctl enable cups.service && \
 systemctl enable dev-hugepages1G.mount && \
 systemctl --global enable podman.socket && \
 systemctl --global enable systemd-tmpfiles-setup.service && \
