@@ -27,7 +27,6 @@ do \
     dnf5 -y config-manager setopt copr:copr.fedorainfracloud.org:${copr////:}.priority=98 ;\
 done && unset -v copr && \
 dnf5 config-manager addrepo --from-repofile="https://negativo17.org/repos/fedora-multimedia.repo" && \
-dnf5 config-manager setopt fedora-multimedia.priority=90 && \
 dnf5 -y install --nogpgcheck --repofrompath 'terra,https://repos.fyralabs.com/terra$releasever' terra-release{,-extras} && \
 dnf5 -y install \
     https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
@@ -39,4 +38,5 @@ dnf5 -y config-manager addrepo --from-repofile=https://negativo17.org/repos/fedo
 dnf5 config-manager addrepo --from-repofile=https://openrazer.github.io/hardware:razer.repo && \
 dnf5 -y config-manager setopt "*akmods*".priority=2 && \
 dnf5 -y config-manager setopt "*terra*".priority=3 "*terra*".exclude="nerd-fonts" && \
-dnf5 -y config-manager setopt "*fedora-multimedia*".priority=4
+dnf5 -y config-manager setopt "*fedora-multimedia*".priority=10 && \
+dnf5 -y config-manager setopt "*rpmfusion*".priority=20

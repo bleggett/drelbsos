@@ -142,5 +142,5 @@ dnf5 -y install \
     google-noto-sans-jp-fonts \
     rom-properties-gtk3 \
     pipewire-pulseaudio \
-    pulseaudioutils \
+    authselect \
     wlr-randr
