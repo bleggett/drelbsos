@@ -141,11 +141,6 @@ dnf5 -y install \
     glibc-all-langpacks \
     google-noto-sans-jp-fonts \
     rom-properties-gtk3 \
-    wlr-randr && \
-
-# Random binaries
-curl -Lo /tmp/ls-iommu.tar.gz $(curl https://api.github.com/repos/HikariKnight/ls-iommu/releases/latest | jq -r '.assets[] | select(.name| test(".*x86_64.tar.gz$")).browser_download_url') && \
-mkdir -p /tmp/ls-iommu && \
-tar --no-same-owner --no-same-permissions --no-overwrite-dir -xvzf /tmp/ls-iommu.tar.gz -C /tmp/ls-iommu && \
-rm -f /tmp/ls-iommu.tar.gz && \
-cp -r /tmp/ls-iommu/ls-iommu /usr/bin/
+    pipewire-pulseaudio \
+    pulseaudioutils \
+    wlr-randr
