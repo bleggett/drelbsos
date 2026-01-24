@@ -10,7 +10,7 @@ New images are built and published automatically every Wednesday 10:05 AM EST
 
 ##  Image signature
 
-Pubkey for the signed images published by this repo is [here](overlay_files/etc/pki/containers/bleggett-cosign.pub) in this repo.
+Pubkey for the signed images published by this repo is [here](overlay_files/etc/pki/containers/drelbsos-cosign.pub) in this repo.
 
 ## Secure Boot
 

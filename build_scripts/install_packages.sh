@@ -118,7 +118,6 @@ dnf5 -y install \
     alacritty \
     pcsc-lite-devel \
     mediawriter \
-    pavucontrol \
     wev \
     SwayNotificationCenter \
     firewall-config \

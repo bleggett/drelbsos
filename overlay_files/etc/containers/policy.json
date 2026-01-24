@@ -45,7 +45,7 @@
                 {
                     "type": "sigstoreSigned",
                     "keyPaths": [
-                        "/etc/pki/containers/bleggett-cosign.pub"
+                        "/etc/pki/containers/drelbsos-cosign.pub"
                     ],
                     "signedIdentity": {
                         "type": "matchRepository"
