@@ -105,6 +105,10 @@ dnf5 -y install \
     zstd \
     adw-gtk3-theme \
     gvfs-nfs \
+    gvfs-mtp \
+    gvfs-smb \
+    gvfs-gphoto2 \
+    gvfs-fuse \
     gstreamer1-plugin-libav \
     gstreamer1-plugins-ugly \
     gstreamer1-plugins-bad \
