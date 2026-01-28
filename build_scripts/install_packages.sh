@@ -121,4 +121,6 @@ dnf5 -y install \
     rom-properties-gtk3 \
     pipewire-pulseaudio \
     authselect \
+    zip \
+    netcat \
     wlr-randr
