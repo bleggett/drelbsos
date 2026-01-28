@@ -38,7 +38,7 @@ systemctl enable cups.service && \
 systemctl enable dev-hugepages1G.mount && \
 systemctl --global enable podman.socket && \
 systemctl --global enable systemd-tmpfiles-setup.service && \
-systemctl disable --now bootc-fetch-apply-updates.timer && \
+rm /usr/lib/systemd/system/default.target.wants/bootc-fetch-apply-updates.timer && \
 curl -Lo /etc/dxvk-example.conf https://raw.githubusercontent.com/doitsujin/dxvk/master/dxvk.conf
 
 # Fix sway.desktop not launching for nvidia:
