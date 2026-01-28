@@ -13,9 +13,6 @@ dnf5 -y install \
     google-droid-sans-mono-fonts \
     python3-pip \
     duperemove \
-    sqlite \
-    xwininfo \
-    xrandr \
     ddcutil \
     input-remapper \
     i2c-tools \
@@ -31,19 +28,12 @@ dnf5 -y install \
     ffmpeg-libs \
     ffmpegthumbnailer \
     ffmpeg \
-    xdotool \
-    wmctrl \
     libcec \
-    yad \
     f3 \
     lzip \
     p7zip \
     rar \
-    libxcrypt-compat \
     vulkan-tools \
-    fastfetch \
-    topgrade \
-    ydotool \
     cdemu-daemon \
     cdemu-client \
     gcdemu \
@@ -52,10 +42,7 @@ dnf5 -y install \
     ncdu \
     btrfs-assistant \
     podman-compose \
-    edk2-ovmf \
-    qemu \
     unetbootin \
-    libvirt \
     antimicrox \
     lsb_release \
     alsa-firmware \
@@ -68,20 +55,11 @@ dnf5 -y install \
     heif-pixbuf-loader \
     htop \
     iperf3 \
-    libavcodec \
-    libcamera \
-    libcamera-tools \
-    libcamera-gstreamer \
-    libcamera-ipa \
-    libheif \
-    libratbag-ratbagd \
-    libva-utils \
     lshw \
     net-tools \
     nvme-cli \
     nvtop \
     openrgb-udev-rules \
-    openssl \
     pam-u2f \
     pam_yubico \
     pamu2fcfg \
@@ -98,11 +76,8 @@ dnf5 -y install \
     vim \
     wireguard-tools \
     wl-clipboard \
-    xhost \
-    xorg-x11-xauth \
     yubikey-manager \
     yubico-piv-tool \
-    zstd \
     adw-gtk3-theme \
     gvfs-nfs \
     gvfs-mtp \
