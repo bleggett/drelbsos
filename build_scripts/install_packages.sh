@@ -37,6 +37,7 @@ dnf5 -y install \
     cdemu-daemon \
     cdemu-client \
     gcdemu \
+    gdouros-symbola-fonts \
     openrazer-meta \
     egl-utils \
     ncdu \
