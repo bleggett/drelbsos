@@ -88,6 +88,7 @@ dnf5 -y install \
     gstreamer1-plugins-ugly \
     gstreamer1-plugins-bad \
     gstreamer1-plugins-good-extras \
+    opensc \
     openssh-askpass \
     cyanrip \
     sway \
