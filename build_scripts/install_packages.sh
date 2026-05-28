@@ -38,7 +38,6 @@ dnf5 -y install \
     cdemu-client \
     gcdemu \
     gdouros-symbola-fonts \
-    openrazer-meta \
     egl-utils \
     ncdu \
     btrfs-assistant \
