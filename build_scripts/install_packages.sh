@@ -124,4 +124,7 @@ dnf5 -y install \
     authselect \
     zip \
     netcat \
+    shotman \
+    slurp \
+    wl-clip-persist \
     wlr-randr
