@@ -9,8 +9,6 @@ dnf5 -y install dnf5-plugins && \
 for copr in \
     ublue-os/staging \
     ublue-os/akmods \
-    bazzite-org/LatencyFleX \
-    bazzite-org/rom-properties \
     bazzite-org/webapp-manager \
     hhd-dev/hhd \
     che/nerd-fonts \
