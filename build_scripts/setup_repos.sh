@@ -12,15 +12,12 @@ for copr in \
     bazzite-org/LatencyFleX \
     bazzite-org/rom-properties \
     bazzite-org/webapp-manager \
-    bazzite-org/vk_hdr_layer \
     hhd-dev/hhd \
     che/nerd-fonts \
     hikariknight/looking-glass-kvmfr \
     rok/cdemu \
-    rodoma92/rmlint \
     drelbszoomer/drelbsos-copr \
-    erikreider/SwayNotificationCenter \
-    ilyaz/LACT; \
+    erikreider/SwayNotificationCenter
 do \
     echo "Enabling copr: $copr"; \
     dnf5 -y copr enable $copr; \
