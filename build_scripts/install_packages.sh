@@ -125,6 +125,7 @@ dnf5 -y install \
     zip \
     netcat \
     shotman \
+    maestral \
     slurp \
     wl-clip-persist \
     wlr-randr
