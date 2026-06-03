@@ -76,7 +76,6 @@ dnf5 install -y \
     nvidia-driver-${NVIDIA_BASE_VERSION}-'[0-9]'.fc${RELEASE} \
     nvidia-driver-cuda-${NVIDIA_BASE_VERSION}-'[0-9]'.fc${RELEASE} \
     nvidia-settings-${NVIDIA_BASE_VERSION}-'[0-9]'.fc${RELEASE} \
-    libnvidia-ml-${NVIDIA_BASE_VERSION}-'[0-9]'.fc${RELEASE}.i686 \
     nvidia-driver-cuda-libs-${NVIDIA_BASE_VERSION}-'[0-9]'.fc${NOARCH_RELEASE}.i686 \
     nvidia-driver-libs-${NVIDIA_BASE_VERSION}-'[0-9]'.fc${NOARCH_RELEASE}.i686 \
     libva-nvidia-driver
