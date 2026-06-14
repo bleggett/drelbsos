@@ -119,7 +119,7 @@ dnf5 -y install \
     cups \
     glibc-all-langpacks \
     google-noto-sans-jp-fonts \
-    rom-properties-gtk3 \
+    rom-properties-gtk4 \
     pipewire-pulseaudio \
     authselect \
     zip \
@@ -128,4 +128,5 @@ dnf5 -y install \
     maestral \
     slurp \
     wl-clip-persist \
-    wlr-randr
+    wlr-randr \
+    woof
