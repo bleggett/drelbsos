@@ -98,3 +98,14 @@ rm -f /usr/share/vulkan/icd.d/nouveau_icd.*.json && \
 rm -f /usr/share/vulkan/icd.d/lvp_icd.*.json && \
 ln -s libnvidia-ml.so.1 /usr/lib64/libnvidia-ml.so && \
 dnf5 -y copr disable ublue-os/staging
+
+# Disable the third-party (non-copr) repos this profile's preinstall added, so
+# the final image does not ship them enabled. The coprs are disabled in
+# prep_system.sh, driven by this profile's repos list.
+sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/fedora-multimedia.repo
+repos=$(dnf5 repo list --all | awk '/negativo17/ {print $1".enabled=0"}')
+[[ -n "$repos" ]] && dnf5 -y config-manager setopt $repos
+
+# Fix sway.desktop not launching for nvidia:
+sed -i 's/Exec=sway$/Exec=sway --unsupported-gpu/' /usr/share/wayland-sessions/sway.desktop
+curl -Lo /etc/dxvk-example.conf https://raw.githubusercontent.com/doitsujin/dxvk/master/dxvk.conf

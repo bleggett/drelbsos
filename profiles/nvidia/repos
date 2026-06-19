@@ -1,0 +1,11 @@
+# COPR repos enabled for this profile (one per line; '#' comments and blank lines ignored).
+# Each is enabled via `dnf5 copr enable` and pinned to priority 98.
+ublue-os/staging
+ublue-os/akmods
+bazzite-org/webapp-manager
+hhd-dev/hhd
+che/nerd-fonts
+hikariknight/looking-glass-kvmfr
+rok/cdemu
+drelbszoomer/drelbsos-copr
+erikreider/SwayNotificationCenter

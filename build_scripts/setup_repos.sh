@@ -5,32 +5,18 @@ set -ouex pipefail
 echo "::group::Executing setup_repos"
 trap 'echo "::endgroup::"' EXIT
 
-dnf5 -y install dnf5-plugins && \
-for copr in \
-    ublue-os/staging \
-    ublue-os/akmods \
-    bazzite-org/webapp-manager \
-    hhd-dev/hhd \
-    che/nerd-fonts \
-    hikariknight/looking-glass-kvmfr \
-    rok/cdemu \
-    drelbszoomer/drelbsos-copr \
-    erikreider/SwayNotificationCenter
-do \
-    echo "Enabling copr: $copr"; \
-    dnf5 -y copr enable $copr; \
-    dnf5 -y config-manager setopt copr:copr.fedorainfracloud.org:${copr////:}.priority=98 ;\
-done && unset -v copr && \
-dnf5 config-manager addrepo --from-repofile="https://negativo17.org/repos/fedora-multimedia.repo" && \
-dnf5 -y install --nogpgcheck --repofrompath 'terra,https://repos.fyralabs.com/terra$releasever' terra-release{,-extras} && \
-dnf5 -y install \
-    https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
-    https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm && \
-sed -i 's@enabled=0@enabled=1@g' /etc/yum.repos.d/fedora-multimedia.repo && \
-dnf5 -y config-manager addrepo --from-repofile=https://negativo17.org/repos/fedora-rar.repo && \
-dnf5 -y config-manager addrepo --from-repofile=https://negativo17.org/repos/fedora-steam.repo && \
-dnf5 -y config-manager addrepo --from-repofile=https://negativo17.org/repos/fedora-nvidia.repo && \
-dnf5 -y config-manager setopt "*akmods*".priority=2 && \
-dnf5 -y config-manager setopt "*terra*".priority=3 "*terra*".exclude="nerd-fonts" && \
-dnf5 -y config-manager setopt "*fedora-multimedia*".priority=10 && \
-dnf5 -y config-manager setopt "*rpmfusion*".priority=20
+SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
+PROFILE="${PROFILE:-nvidia}"
+REPOS_FILE="${SCRIPT_DIR}/../profiles/${PROFILE}/repos"
+
+dnf5 -y install dnf5-plugins
+
+if [[ -f "${REPOS_FILE}" ]]; then
+    while read -r copr; do
+        echo "Enabling copr: ${copr}"
+        dnf5 -y copr enable "${copr}"
+        dnf5 -y config-manager setopt "copr:copr.fedorainfracloud.org:${copr////:}.priority=98"
+    done < <(grep -vE '^\s*(#|$)' "${REPOS_FILE}")
+else
+    echo "No repos file at ${REPOS_FILE}, skipping copr enables"
+fi

@@ -18,6 +18,10 @@ on:
         description: 'Clear rechunk history'
         type: boolean
         default: false
+      profile:
+        description: 'Build profile (selects files under profiles/<profile>/)'
+        type: string
+        default: 'nvidia'
 env:
   IMAGE_DESC: "DrelbsOS"
   IMAGE_KEYWORDS: "bootc,fedora"
@@ -44,6 +48,18 @@ jobs:
         id: shortsha
         run: |
           echo "SHA_HEAD_SHORT=${GITHUB_SHA::7}" >> $GITHUB_ENV
+
+      - name: Resolve build profile
+        id: profile
+        run: |
+          # Empty for non-dispatch triggers (push/schedule/PR); fall back to default.
+          PROFILE="${{ github.event.inputs.profile }}"
+          PROFILE="${PROFILE:-nvidia}"
+          # Each profile is published to its own OCI repo, IMAGE_NAME-profile.
+          IMAGE_REPO="${{ env.IMAGE_NAME }}-${PROFILE}"
+          echo "profile=${PROFILE}" >> $GITHUB_OUTPUT
+          echo "image_repo=${IMAGE_REPO}" >> $GITHUB_OUTPUT
+          echo "Building profile ${PROFILE} -> ${{ env.IMAGE_REGISTRY }}/${IMAGE_REPO}"
 
       - name: Get current date
         id: date
@@ -96,6 +112,7 @@ jobs:
             --build-arg FEDORA_MAJOR_VERSION=${{ env.FEDORA_MAJOR_VERSION }} \
             --build-arg IMAGE_BRANCH=${{ github.ref_name }} \
             --build-arg IMAGE_BUILDID=${{ steps.generate-version.outputs.tag }} \
+            --build-arg PROFILE=${{ steps.profile.outputs.profile }} \
             --tag raw-img .
 
       # Generate the previous image reference used by the Rechunker
@@ -106,7 +123,7 @@ jobs:
           if [ "${{ github.event.inputs.fresh-rechunk }}" == "true" ]; then
             IMAGEREF=""
           else
-            IMAGEREF="${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAME }}:main"
+            IMAGEREF="${{ env.IMAGE_REGISTRY }}/${{ steps.profile.outputs.image_repo }}:main"
           fi
 
           echo "ref=${IMAGEREF}" >> $GITHUB_OUTPUT
@@ -179,7 +196,7 @@ jobs:
           command: |
             echo "${{ secrets.GITHUB_TOKEN }}" | sudo podman login ghcr.io -u ${{ github.actor }} --password-stdin
             for tag in ${{ steps.generate-tags.outputs.alias_tags }}; do
-              sudo skopeo copy ${{ steps.rechunk.outputs.ref }} docker://${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAME }}:$tag
+              sudo skopeo copy ${{ steps.rechunk.outputs.ref }} docker://${{ env.IMAGE_REGISTRY }}/${{ steps.profile.outputs.image_repo }}:$tag
             done
 
       - name: Get Image Digest
@@ -208,7 +225,7 @@ jobs:
       - name: Sign container image
         if: github.event_name != 'pull_request' && github.ref_name == 'main'
         run: |
-          IMAGE_FULL="${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAME }}"
+          IMAGE_FULL="${{ env.IMAGE_REGISTRY }}/${{ steps.profile.outputs.image_repo }}"
           for tag in ${{ steps.generate-tags.outputs.alias_tags }}; do
             cosign sign -y --key env://COSIGN_PRIVATE_KEY $IMAGE_FULL:$tag
           done
