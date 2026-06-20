@@ -39,6 +39,9 @@ jobs:
     name: Build and push image
     runs-on: ubuntu-24.04
     continue-on-error: false
+    outputs:
+      profile: ${{ steps.profile.outputs.profile }}
+      image_repo: ${{ steps.profile.outputs.image_repo }}
     permissions:
       contents: read
       packages: write
@@ -242,3 +245,5 @@ jobs:
     permissions:
       contents: write  # Required for creating releases
     uses: ./.github/workflows/generate-release.yml
+    with:
+      profile: ${{ needs.push-ghcr.outputs.profile }}

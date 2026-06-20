@@ -1,7 +1,16 @@
 on:
   workflow_call:
+    inputs:
+      profile:
+        description: 'Build profile (selects the drelbsos-<profile> OCI repo to diff)'
+        type: string
+        required: false
+        default: 'nvidia'
   workflow_dispatch:
     inputs:
+      profile:
+        description: 'Build profile (selects the drelbsos-<profile> OCI repo to diff)'
+        default: 'nvidia'
       handwritten:
         description: 'Small changelog about changes in this build:'
       target:
@@ -31,7 +40,11 @@ jobs:
         run: |
           python3 ./.github/workflows/changelog.py \
             "${{ steps.get-target.outputs.target }}" \
-            ./output.env ./changelog.md --workdir . --handwritten "${{ github.event.inputs.handwritten }}"
+            ./output.env ./changelog.md --workdir . \
+            --handwritten "${{ github.event.inputs.handwritten }}" \
+            --profile "${{ inputs.profile || 'nvidia' }}" \
+            --owner "${{ github.repository_owner }}" \
+            --image-name "${{ github.event.repository.name }}"
           source ./output.env
           echo "title=${TITLE}" >> $GITHUB_OUTPUT
           echo "tag=${TAG}" >> $GITHUB_OUTPUT

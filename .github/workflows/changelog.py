@@ -1,4 +1,4 @@
-from itertools import product
+import os
 import subprocess
 import json
 import time
@@ -6,12 +6,14 @@ from typing import Any
 import re
 from collections import defaultdict
 
-REGISTRY = "docker://ghcr.io/bleggett/"
-IMAGE_MATRIX = {
-    "base": [""],
-    "de": [""],
-    "image_flavor": [""],
-}
+# GHCR owner and image base name. Set from --owner/--image-name in main() (which
+# default to the GITHUB_REPOSITORY_OWNER / GITHUB_REPOSITORY env vars Actions sets)
+# before any get_images()/get_manifests() call.
+OWNER = "bleggett"
+IMAGE_NAME = "drelbsos"
+# Each build profile publishes to its own OCI repo, <image_name>-<profile>. Set
+# from --profile in main() before any get_images()/get_manifests() call.
+PROFILE = "nvidia"
 
 RETRIES = 3
 RETRY_WAIT = 5
@@ -30,7 +32,7 @@ OTHER_NAMES = {
 }
 
 COMMITS_FORMAT = "### Commits\n| Hash | Subject |\n| --- | --- |{commits}\n\n"
-COMMIT_FORMAT = "\n| **[{short}](https://github.com/bleggett/drelbsos/commit/{hash})** | {subject} |"
+COMMIT_FORMAT = "\n| **[{short}](https://github.com/{owner}/{image}/commit/{hash})** | {subject} |"
 
 CHANGELOG_TITLE = "{tag}: {pretty}"
 CHANGELOG_FORMAT = """\
@@ -55,7 +57,7 @@ sudo bootc upgrade
 ### How to switch
 For bootc users, type the following to switch to this version:
 ```bash
-sudo bootc switch ghcr.io/bleggett/drelbsos:43
+sudo bootc switch ghcr.io/{owner}/{image}-{profile}:{curr}
 ```
 """
 HANDWRITTEN_PLACEHOLDER = """\
@@ -72,17 +74,9 @@ BLACKLIST_VERSIONS = [
 
 
 def get_images():
-    for base, de, image_flavor in product(*IMAGE_MATRIX.values()):
-        img = "drelbsos"
-        if de == "gnome":
-            img += "-gnome"
-
-        if base == "nvidia":
-            img += "-nvidia"
-        elif base == "nvidia-open":
-            img += "-nvidia-open"
-
-        yield img, base, de, image_flavor
+    # base carries the profile so the per-profile "others" grouping (e.g. nvidia)
+    # still selects when the profile name contains that keyword.
+    yield f"{IMAGE_NAME}-{PROFILE}", PROFILE, "", ""
 
 
 def get_manifests(target: str):
@@ -94,7 +88,7 @@ def get_manifests(target: str):
         for i in range(RETRIES):
             try:
                 output = subprocess.run(
-                    ["skopeo", "inspect", REGISTRY + img + ":" + target],
+                    ["skopeo", "inspect", f"docker://ghcr.io/{OWNER}/{img}:{target}"],
                     check=True,
                     stdout=subprocess.PIPE,
                 ).stdout
@@ -129,8 +123,13 @@ def get_tags(target: str, manifests: dict[str, Any]):
 
     tags = sorted(tags)
 
+    if len(tags) < 1:
+        raise ValueError(f"Need at least 1 stable tag to generate changelog, found {len(tags)}")
+
+    # A freshly-created per-profile repo only has the current tag and no
+    # predecessor to diff against; release it against itself (empty diff).
     if len(tags) < 2:
-        raise ValueError(f"Need at least 2 stable tags to generate changelog, found {len(tags)}")
+        return tags[-1], tags[-1]
 
     # Return the two most recent tags
     return tags[-2], tags[-1]
@@ -282,6 +281,8 @@ def get_commits(prev_manifests, manifests, workdir: str):
                 COMMIT_FORMAT.replace("{short}", short)
                 .replace("{subject}", subject)
                 .replace("{hash}", hash)
+                .replace("{owner}", OWNER)
+                .replace("{image}", IMAGE_NAME)
             )
 
         if out:
@@ -334,6 +335,9 @@ def generate_changelog(
         .replace("{target}", target)
         .replace("{prev}", prev)
         .replace("{curr}", curr)
+        .replace("{owner}", OWNER)
+        .replace("{image}", IMAGE_NAME)
+        .replace("{profile}", PROFILE)
     )
 
     for pkg, v in versions.items():
@@ -365,6 +369,8 @@ def generate_changelog(
 def main():
     import argparse
 
+    global PROFILE, OWNER, IMAGE_NAME
+
     parser = argparse.ArgumentParser()
     parser.add_argument("target", help="Target branch or tag (e.g., main)")
     parser.add_argument("output", help="Output environment file")
@@ -372,7 +378,25 @@ def main():
     parser.add_argument("--pretty", help="Subject for the changelog")
     parser.add_argument("--workdir", help="Git directory for commits")
     parser.add_argument("--handwritten", help="Handwritten changelog")
+    parser.add_argument("--profile", default="nvidia", help="Build profile (<image_name>-<profile> OCI repo)")
+    parser.add_argument(
+        "--owner",
+        default=os.environ.get("GITHUB_REPOSITORY_OWNER", OWNER),
+        help="GHCR/GitHub owner (defaults to $GITHUB_REPOSITORY_OWNER)",
+    )
+    parser.add_argument(
+        "--image-name",
+        default=os.environ.get("GITHUB_REPOSITORY", "").split("/")[-1] or IMAGE_NAME,
+        help="Image base/repo name (defaults to the repo name in $GITHUB_REPOSITORY)",
+    )
     args = parser.parse_args()
+
+    if args.profile:
+        PROFILE = args.profile
+    if args.owner:
+        OWNER = args.owner
+    if args.image_name:
+        IMAGE_NAME = args.image_name
 
     # Remove refs/tags, refs/heads, refs/remotes prefixes
     target = args.target.split('/')[-1]
