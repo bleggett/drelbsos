@@ -112,7 +112,9 @@ git
 cups
 glibc-all-langpacks
 google-noto-sans-jp-fonts
+rom-properties-gtk3
 rom-properties-gtk4
+obs-studio-plugin-vkcapture
 pipewire-pulseaudio
 authselect
 zip
