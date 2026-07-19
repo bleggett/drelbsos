@@ -43,6 +43,7 @@ android-udev-rules
 distrobox
 flatpak-spawn
 fuse
+fuse-libs
 fzf
 grub2-tools-extra
 heif-pixbuf-loader
