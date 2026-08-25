@@ -125,3 +125,15 @@ slurp
 wl-clip-persist
 wlr-randr
 woof
+
+# Heroic bits
+heroic-games-launcher
+gamescope
+mangohud
+vkBasalt
+obs-studio-plugin-vkcapture-hook-libs
+# 32-bit halves, needed for the layers to load into 32-bit Proton games
+gamemode.i686
+mangohud.i686
+vkBasalt.i686
+obs-studio-plugin-vkcapture-hook-libs.i686
