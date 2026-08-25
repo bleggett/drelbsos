@@ -1,0 +1,6 @@
+# Packages excluded from the install transaction (one per line; '#' comments and
+# blank lines ignored). Intended for unwanted weak dependencies.
+# heroic-games-launcher-bin recommends wine, but games here run under the Proton
+# builds Heroic manages itself, and the system wine stack costs ~3 GiB.
+wine
+wine-dxvk
