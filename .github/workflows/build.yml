@@ -37,7 +37,7 @@ concurrency:
 jobs:
   push-ghcr:
     name: Build and push image
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     continue-on-error: false
     outputs:
       profile: ${{ steps.profile.outputs.profile }}
@@ -106,14 +106,20 @@ jobs:
           echo "Generated the following:"
           cat $GITHUB_OUTPUT
 
+      - name: Toolchain versions
+        run: |
+          buildah version
+          podman version
+          uname -a
+
       - name: Disk before build
-        run: df -h / /mnt /var/lib/containers 2>&1 || true
+        run: df -h / /mnt 2>&1 || true
 
       # Build image using buildah and save it to raw-img
       - name: Build Image
         id: build_image
         run: |
-          sudo buildah build \
+          buildah build \
             --build-arg IMAGE_NAME=${{ env.IMAGE_NAME }} \
             --build-arg FEDORA_MAJOR_VERSION=${{ env.FEDORA_MAJOR_VERSION }} \
             --build-arg IMAGE_BRANCH=${{ github.ref_name }} \
@@ -122,7 +128,7 @@ jobs:
             --tag raw-img .
 
       - name: Disk after build
-        run: df -h / /mnt /var/lib/containers 2>&1 || true
+        run: df -h / /mnt 2>&1 || true
 
       # The rpm database verifies clean at the end of final_clean.sh but is
       # corrupt in the published image, so something between the two damages it.
@@ -131,7 +137,7 @@ jobs:
       - name: Check rpm database after layer commit
         shell: bash
         run: |
-          if sudo podman run --rm --pull=never \
+          if podman run --rm --pull=never \
               --entrypoint /usr/bin/rpmdb localhost/raw-img --verifydb; then
             echo "RPMDB-CHECK: clean after buildah commit"
           else
@@ -141,73 +147,107 @@ jobs:
           # Allocated smaller than apparent means the zeroed regions are real
           # holes, so the blocks were never written. Equal means something wrote
           # zeros over live data instead.
-          sudo podman run --rm --pull=never --entrypoint /usr/bin/stat \
+          podman run --rm --pull=never --entrypoint /usr/bin/stat \
             localhost/raw-img -c 'RPMDB-EXTENT: apparent=%s allocated=%b*%B' \
             /usr/share/rpm/rpmdb.sqlite
 
-          sudo podman run --rm --pull=never --entrypoint /usr/bin/sha256sum \
+          podman run --rm --pull=never --entrypoint /usr/bin/sha256sum \
             localhost/raw-img /usr/share/rpm/rpmdb.sqlite
 
-          sudo podman info --format '{{.Store.GraphDriverName}} {{.Store.GraphRoot}}'
+          podman info --format '{{.Store.GraphDriverName}} {{.Store.GraphRoot}}'
 
-      # Generate the previous image reference used by the Rechunker
-      - name: Generate previous reference
-        id: generate-prev-ref
-        shell: bash
-        run: |
-          if [ "${{ github.event.inputs.fresh-rechunk }}" == "true" ]; then
-            IMAGEREF=""
-          else
-            IMAGEREF="${{ env.IMAGE_REGISTRY }}/${{ steps.profile.outputs.image_repo }}:main"
-          fi
-
-          echo "ref=${IMAGEREF}" >> $GITHUB_OUTPUT
-
-          echo "Generated the following:"
-          cat $GITHUB_OUTPUT
-
-      # Reprocess raw-img using rechunker which will delete it
+      # Reprocess raw-img using the image's own rpm-ostree, which will delete it
       - name: Run Rechunker
         id: rechunk
-        uses: hhd-dev/rechunk@v1.2.4
-        with:
-          rechunk: 'ghcr.io/hhd-dev/rechunk:v1.2.4'
-          ref: 'raw-img'
-          prev-ref: '${{ steps.generate-prev-ref.outputs.ref }}'
-          version: '${{ steps.generate-version.outputs.tag }}'
-          labels: |
-            io.artifacthub.package.readme-url=https://raw.githubusercontent.com/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}/${{ github.sha }}/README.md
-            org.opencontainers.image.created=<timestamp>
-            org.opencontainers.image.description=${{ env.IMAGE_DESC }}
-            org.opencontainers.image.documentation=https://raw.githubusercontent.com/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}/${{ github.sha }}/README.md
-            org.opencontainers.image.licenses=Apache-2.0
-            org.opencontainers.image.revision=${{ github.sha }}
-            org.opencontainers.image.source=https://github.com/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}/blob/${{ github.sha }}/Containerfile
-            org.opencontainers.image.title=${{ env.IMAGE_NAME }}
-            org.opencontainers.image.url=https://github.com/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}/tree/${{ github.sha }}
-            org.opencontainers.image.vendor=${{ github.repository_owner }}
-            org.opencontainers.image.version=${{ steps.generate-version.outputs.tag }}
-            org.universal-blue.pkg.kernel=<relver:kernel>
-            org.fedoraproject.coreos.ostree.version=${{ steps.generate-version.outputs.tag }}
-            io.artifacthub.package.deprecated=false
-            io.artifacthub.package.keywords=${{ env.IMAGE_KEYWORDS }}
-            io.artifacthub.package.license=Apache-2.0
-            io.artifacthub.package.logo-url=${{ env.IMAGE_LOGO_URL }}
-            io.artifacthub.package.prerelease=false
-            containers.bootc=1
+        shell: bash
+        run: |
+          set -euo pipefail
 
+          # /run and /tmp are runtime-only, and content left in them fails
+          # bootc container lint.
+          buildah unshare bash -euo pipefail -c '
+            container=$(buildah from raw-img)
+            mnt=$(buildah mount "$container")
+            rm -rf "$mnt"/run/.* "$mnt"/run/* "$mnt"/tmp/.* "$mnt"/tmp/* || true
+            buildah umount "$container"
+            buildah commit --identity-label=false --rm "$container" raw-img
+          '
 
-      # Generate tags after rechunker runs and checks the primary tag is not duplicated
-      # If it is, rechunk will suffix it by .1, .2, etc and put it in steps.rechunk.outputs.version
+          # Basing the layer plan on the previous build keeps existing users from
+          # redownloading most of the image.
+          PREV_ARGS=()
+          if [ "${{ github.event.inputs.fresh-rechunk }}" != "true" ]; then
+            PREV_ARGS+=(--previous-build "docker://${{ env.IMAGE_REGISTRY }}/${{ steps.profile.outputs.image_repo }}:main")
+          fi
+
+          KERNEL_VERSION=$(podman run --rm --pull=never \
+            --entrypoint /usr/bin/rpm localhost/raw-img \
+            -q --qf '%{VERSION}-%{RELEASE}.%{ARCH}' kernel-core)
+
+          LABELS=(
+            "io.artifacthub.package.readme-url=https://raw.githubusercontent.com/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}/${{ github.sha }}/README.md"
+            "org.opencontainers.image.created=${{ steps.date.outputs.date }}"
+            "org.opencontainers.image.description=${{ env.IMAGE_DESC }}"
+            "org.opencontainers.image.documentation=https://raw.githubusercontent.com/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}/${{ github.sha }}/README.md"
+            "org.opencontainers.image.licenses=Apache-2.0"
+            "org.opencontainers.image.revision=${{ github.sha }}"
+            "org.opencontainers.image.source=https://github.com/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}/blob/${{ github.sha }}/Containerfile"
+            "org.opencontainers.image.title=${{ env.IMAGE_NAME }}"
+            "org.opencontainers.image.url=https://github.com/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}/tree/${{ github.sha }}"
+            "org.opencontainers.image.vendor=${{ github.repository_owner }}"
+            "org.opencontainers.image.version=${{ steps.generate-version.outputs.tag }}"
+            "org.universal-blue.pkg.kernel=${KERNEL_VERSION}"
+            "org.fedoraproject.coreos.ostree.version=${{ steps.generate-version.outputs.tag }}"
+            "ostree.bootable=true"
+            "ostree.linux=${KERNEL_VERSION}"
+            "io.artifacthub.package.deprecated=false"
+            "io.artifacthub.package.keywords=${{ env.IMAGE_KEYWORDS }}"
+            "io.artifacthub.package.license=Apache-2.0"
+            "io.artifacthub.package.logo-url=${{ env.IMAGE_LOGO_URL }}"
+            "io.artifacthub.package.prerelease=false"
+            "containers.bootc=1"
+          )
+          LABEL_ARGS=()
+          for label in "${LABELS[@]}"; do
+            LABEL_ARGS+=(--label "${label}")
+          done
+
+          OUT_DIR="$(mktemp -d "${RUNNER_TEMP}/rechunk-XXXXXX")"
+          trap 'rm -rf "${OUT_DIR}"' EXIT
+
+          # rpm-ostree is run out of the image being chunked so that the
+          # libselinux relabelling the tree is the one the image ships. A
+          # foreign one silently falls back to the text file_contexts when its
+          # PCRE2 is older than the compiled file_contexts.bin.
+          podman run --rm --pull=never --privileged \
+            --mount=type=image,src=localhost/raw-img,target=/rpm-ostree \
+            --volume "${OUT_DIR}:/run/out:Z" \
+            --entrypoint /usr/bin/rpm-ostree \
+            localhost/raw-img \
+            compose build-chunked-oci \
+            --bootc --max-layers 127 --format-version 2 \
+            "${PREV_ARGS[@]}" \
+            "${LABEL_ARGS[@]}" \
+            --rootfs /rpm-ostree \
+            --output oci-archive:/run/out/chunked.oci
+
+          # Freed before the pull below, which needs room for a second copy.
+          podman rmi -f localhost/raw-img
+
+          CHUNKED=$(podman pull oci-archive:"${OUT_DIR}/chunked.oci")
+          podman tag "${CHUNKED}" localhost/chunked-img
+
+          echo "ref=containers-storage:localhost/chunked-img" >> $GITHUB_OUTPUT
+
       - name: Generate tags
         id: generate-tags
         shell: bash
         run: |
-          BUILD_TAGS=( "${{ steps.rechunk.outputs.version }}" )
+          BUILD_TAGS=( "${{ steps.generate-version.outputs.tag }}" )
 
           # Add other variants
           BUILD_TAGS+=("${FEDORA_MAJOR_VERSION}")
-          BUILD_TAGS+=("${{ github.ref_name }}-${{ steps.rechunk.outputs.version }}")
+          BUILD_TAGS+=("${{ github.ref_name }}-${{ steps.generate-version.outputs.tag }}")
 
           # Per fedora version
           BUILD_TAGS+=("${FEDORA_MAJOR_VERSION}-${{ github.ref_name }}")
@@ -229,9 +269,9 @@ jobs:
           attempt_limit: 3
           attempt_delay: 15000
           command: |
-            echo "${{ secrets.GITHUB_TOKEN }}" | sudo podman login ghcr.io -u ${{ github.actor }} --password-stdin
+            echo "${{ secrets.GITHUB_TOKEN }}" | podman login ghcr.io -u ${{ github.actor }} --password-stdin
             for tag in ${{ steps.generate-tags.outputs.alias_tags }}; do
-              sudo skopeo copy ${{ steps.rechunk.outputs.ref }} docker://${{ env.IMAGE_REGISTRY }}/${{ steps.profile.outputs.image_repo }}:$tag
+              skopeo copy ${{ steps.rechunk.outputs.ref }} docker://${{ env.IMAGE_REGISTRY }}/${{ steps.profile.outputs.image_repo }}:$tag
             done
 
       - name: Get Image Digest
@@ -239,7 +279,7 @@ jobs:
         if: github.event_name != 'pull_request' && github.ref_name == 'main'
         run: |
           # Get digest for signing
-          DIGEST=$(sudo skopeo inspect --format '{{.Digest}}' ${{ steps.rechunk.outputs.ref }})
+          DIGEST=$(skopeo inspect --format '{{.Digest}}' ${{ steps.rechunk.outputs.ref }})
           echo "Digest is: $DIGEST"
           echo "digest=${DIGEST}" >> $GITHUB_OUTPUT
 
