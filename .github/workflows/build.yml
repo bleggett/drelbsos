@@ -145,6 +145,9 @@ jobs:
             localhost/raw-img -c 'RPMDB-EXTENT: apparent=%s allocated=%b*%B' \
             /usr/share/rpm/rpmdb.sqlite
 
+          sudo podman run --rm --pull=never --entrypoint /usr/bin/sha256sum \
+            localhost/raw-img /usr/share/rpm/rpmdb.sqlite
+
           sudo podman info --format '{{.Store.GraphDriverName}} {{.Store.GraphRoot}}'
 
       # Generate the previous image reference used by the Rechunker
