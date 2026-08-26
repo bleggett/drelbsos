@@ -34,15 +34,23 @@ if [[ -f "${REPOS_FILE}" ]]; then
 fi
 
 # ostree regenerates the binary policy from the module store on every deploy, so
-# a module that made it into the policy binary but not into the store vanishes
-# on first boot, leaving files in /usr labelled with types the running policy
-# has never heard of. Reinstall them at the priority those scriptlets use,
-# rebuild so the shipped policy is exactly what a deploy will regenerate,
-# and assert every shipped module actually landed.
+# anything the image's file labels rely on has to be in the store, not just in
+# the policy binary the build happens to ship. The -selinux subpackages install
+# their modules from %post with a trailing `|| :`, so a failure there is silent.
+#
+# libsemanage cannot commit a store that lives in a lower layer: its
+# active -> previous rename is EXDEV, and the non-atomic fallback copies rather
+# than moves, so active survives and the following tmp -> active rename fails
+# with ENOTEMPTY. Pull the store into this layer first to keep every rename
+# intra-layer, discarding any sandbox a previously failed commit left behind.
+rm -rf /etc/selinux/targeted/tmp /etc/selinux/targeted/previous
+cp -a /etc/selinux/targeted /etc/selinux/targeted.relayer
+rm -rf /etc/selinux/targeted
+mv /etc/selinux/targeted.relayer /etc/selinux/targeted
+
 for pp in /usr/share/selinux/packages/*.pp.bz2; do
     semodule -n -X 200 -i "${pp}"
 done
-semodule -n -B
 for pp in /usr/share/selinux/packages/*.pp.bz2; do
     name="$(basename "${pp}" .pp.bz2)"
     ls -d "/etc/selinux/targeted/active/modules/"*"/${name}" > /dev/null
