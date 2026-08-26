@@ -32,3 +32,18 @@ if [[ -f "${REPOS_FILE}" ]]; then
         dnf5 -y copr disable "${copr}"
     done < <(grep -vE '^\s*(#|$)' "${REPOS_FILE}")
 fi
+
+# ostree regenerates the binary policy from the module store on every deploy, so
+# a module that made it into the policy binary but not into the store vanishes
+# on first boot, leaving files in /usr labelled with types the running policy
+# has never heard of. Reinstall them at the priority those scriptlets use,
+# rebuild so the shipped policy is exactly what a deploy will regenerate,
+# and assert every shipped module actually landed.
+for pp in /usr/share/selinux/packages/*.pp.bz2; do
+    semodule -n -X 200 -i "${pp}"
+done
+semodule -n -B
+for pp in /usr/share/selinux/packages/*.pp.bz2; do
+    name="$(basename "${pp}" .pp.bz2)"
+    ls -d "/etc/selinux/targeted/active/modules/"*"/${name}" > /dev/null
+done
