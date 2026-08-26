@@ -48,10 +48,22 @@ cp -a /etc/selinux/targeted /etc/selinux/targeted.relayer
 rm -rf /etc/selinux/targeted
 mv /etc/selinux/targeted.relayer /etc/selinux/targeted
 
-for pp in /usr/share/selinux/packages/*.pp.bz2; do
+# Packages drop their modules either straight into packages/ or under the policy
+# type they target, compressed or not. 200 is the priority their scriptlets use
+# to override the copies selinux-policy ships at 100, so assert on that priority
+# rather than on any: a module stuck at 100 is the stale one.
+SEMODULES=(
+    /usr/share/selinux/packages/*.pp
+    /usr/share/selinux/packages/*.pp.bz2
+    /usr/share/selinux/packages/targeted/*.pp
+    /usr/share/selinux/packages/targeted/*.pp.bz2
+)
+for pp in "${SEMODULES[@]}"; do
+    [[ -f "${pp}" ]] || continue
     semodule -n -X 200 -i "${pp}"
 done
-for pp in /usr/share/selinux/packages/*.pp.bz2; do
-    name="$(basename "${pp}" .pp.bz2)"
-    ls -d "/etc/selinux/targeted/active/modules/"*"/${name}" > /dev/null
+for pp in "${SEMODULES[@]}"; do
+    [[ -f "${pp}" ]] || continue
+    name="$(basename "${pp}")"
+    ls -d "/etc/selinux/targeted/active/modules/200/${name%%.pp*}" > /dev/null
 done
