@@ -106,6 +106,9 @@ jobs:
           echo "Generated the following:"
           cat $GITHUB_OUTPUT
 
+      - name: Disk before build
+        run: df -h / /mnt /var/lib/containers 2>&1 || true
+
       # Build image using buildah and save it to raw-img
       - name: Build Image
         id: build_image
@@ -117,6 +120,9 @@ jobs:
             --build-arg IMAGE_BUILDID=${{ steps.generate-version.outputs.tag }} \
             --build-arg PROFILE=${{ steps.profile.outputs.profile }} \
             --tag raw-img .
+
+      - name: Disk after build
+        run: df -h / /mnt /var/lib/containers 2>&1 || true
 
       # The rpm database verifies clean at the end of final_clean.sh but is
       # corrupt in the published image, so something between the two damages it.
@@ -131,6 +137,15 @@ jobs:
           else
             echo "RPMDB-CHECK: corrupt after buildah commit"
           fi
+
+          # Allocated smaller than apparent means the zeroed regions are real
+          # holes, so the blocks were never written. Equal means something wrote
+          # zeros over live data instead.
+          sudo podman run --rm --pull=never --entrypoint /usr/bin/stat \
+            localhost/raw-img -c 'RPMDB-EXTENT: apparent=%s allocated=%b*%B' \
+            /usr/share/rpm/rpmdb.sqlite
+
+          sudo podman info --format '{{.Store.GraphDriverName}} {{.Store.GraphRoot}}'
 
       # Generate the previous image reference used by the Rechunker
       - name: Generate previous reference
