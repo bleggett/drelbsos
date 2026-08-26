@@ -33,35 +33,12 @@ if [[ -f "${REPOS_FILE}" ]]; then
     done < <(grep -vE '^\s*(#|$)' "${REPOS_FILE}")
 fi
 
-# ostree regenerates the binary policy from the module store on every deploy, so
-# anything the image's file labels rely on has to be in the store, not just in
-# the policy binary the build happens to ship. The -selinux subpackages install
-# their modules from %post with a trailing `|| :`, so a failure there is silent.
-#
-# libsemanage cannot commit a store that lives in a lower layer: its
-# active -> previous rename is EXDEV, and the non-atomic fallback copies rather
-# than moves, so active survives and the following tmp -> active rename fails
-# with ENOTEMPTY. Pull the store into this layer first to keep every rename
-# intra-layer, discarding any sandbox a previously failed commit left behind.
-rm -rf /etc/selinux/targeted/tmp /etc/selinux/targeted/previous
-cp -a /etc/selinux/targeted /etc/selinux/targeted.relayer
-rm -rf /etc/selinux/targeted
-mv /etc/selinux/targeted.relayer /etc/selinux/targeted
-
-# Packages drop their modules either straight into packages/ or under the policy
-# type they target, compressed or not. 200 is the priority their scriptlets use
-# to override the copies selinux-policy ships at 100, so assert on that priority
-# rather than on any: a module stuck at 100 is the stale one.
 SEMODULES=(
     /usr/share/selinux/packages/*.pp
     /usr/share/selinux/packages/*.pp.bz2
     /usr/share/selinux/packages/targeted/*.pp
     /usr/share/selinux/packages/targeted/*.pp.bz2
 )
-for pp in "${SEMODULES[@]}"; do
-    [[ -f "${pp}" ]] || continue
-    semodule -n -X 200 -i "${pp}"
-done
 for pp in "${SEMODULES[@]}"; do
     [[ -f "${pp}" ]] || continue
     name="$(basename "${pp}")"
