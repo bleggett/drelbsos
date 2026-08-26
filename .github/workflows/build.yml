@@ -118,6 +118,20 @@ jobs:
             --build-arg PROFILE=${{ steps.profile.outputs.profile }} \
             --tag raw-img .
 
+      # The rpm database verifies clean at the end of final_clean.sh but is
+      # corrupt in the published image, so something between the two damages it.
+      # This splits that window at the layer commit. Reports without failing,
+      # because the database is already known to be bad.
+      - name: Check rpm database after layer commit
+        shell: bash
+        run: |
+          if sudo podman run --rm --pull=never \
+              --entrypoint /usr/bin/rpmdb localhost/raw-img --verifydb; then
+            echo "RPMDB-CHECK: clean after buildah commit"
+          else
+            echo "RPMDB-CHECK: corrupt after buildah commit"
+          fi
+
       # Generate the previous image reference used by the Rechunker
       - name: Generate previous reference
         id: generate-prev-ref
