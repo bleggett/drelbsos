@@ -11,13 +11,6 @@ on:
   merge_group:
   workflow_dispatch:
     inputs:
-      # Run with this periodically to analyze the image again
-      # As package drift will make the plan eventually non-ideal
-      # (existing users will have to redownload most of the image)
-      fresh-rechunk:
-        description: 'Clear rechunk history'
-        type: boolean
-        default: false
       profile:
         description: 'Build profile (selects files under profiles/<profile>/)'
         type: string
@@ -79,18 +72,6 @@ jobs:
       # Checkout push-to-registry action GitHub repository
       - name: Checkout Push to Registry action
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v6
-
-      - name: Maximize build space
-        uses: AdityaGarg8/remove-unwanted-software@90e01b21170618765a73370fcc3abbd1684a7793 # v5
-        with:
-          remove-dotnet: true
-          remove-android: true
-          remove-haskell: true
-          remove-codeql: true
-          remove-docker-images: true
-          remove-large-packages: true
-          remove-cached-tools: true
-          remove-swapfile: true
 
       # Generate a primary version key
       - name: Generate Version
@@ -173,12 +154,11 @@ jobs:
             buildah commit --identity-label=false --rm "$container" raw-img
           '
 
-          # Basing the layer plan on the previous build keeps existing users from
-          # redownloading most of the image.
-          PREV_ARGS=()
-          if [ "${{ github.event.inputs.fresh-rechunk }}" != "true" ]; then
-            PREV_ARGS+=(--previous-build "docker://${{ env.IMAGE_REGISTRY }}/${{ steps.profile.outputs.image_repo }}:main")
-          fi
+          # No --previous-build. Its packing path keys bins by package name and
+          # asserts that every component landed in one, which cannot hold when
+          # two components share a name, as multilib .i686 halves do. It aborts
+          # the whole chunk. Layer plans are recomputed each build instead, at
+          # the cost of larger deltas for existing users.
 
           KERNEL_VERSION=$(podman run --rm --pull=never \
             --entrypoint /usr/bin/rpm localhost/raw-img \
@@ -213,7 +193,11 @@ jobs:
           done
 
           OUT_DIR="$(mktemp -d "${RUNNER_TEMP}/rechunk-XXXXXX")"
-          trap 'rm -rf "${OUT_DIR}"' EXIT
+          # final_clean.sh empties /var, so the image has no /var/tmp for
+          # rpm-ostree to work in. Disk-backed rather than a tmpfs, since the
+          # baseline image is unpacked there.
+          TMP_DIR="$(mktemp -d "${RUNNER_TEMP}/rechunk-tmp-XXXXXX")"
+          trap 'rm -rf "${OUT_DIR}" "${TMP_DIR}"' EXIT
 
           # rpm-ostree is run out of the image being chunked so that the
           # libselinux relabelling the tree is the one the image ships. A
@@ -222,11 +206,11 @@ jobs:
           podman run --rm --pull=never --privileged \
             --mount=type=image,src=localhost/raw-img,target=/rpm-ostree \
             --volume "${OUT_DIR}:/run/out:Z" \
+            --volume "${TMP_DIR}:/var/tmp:Z" \
             --entrypoint /usr/bin/rpm-ostree \
             localhost/raw-img \
             compose build-chunked-oci \
             --bootc --max-layers 127 --format-version 2 \
-            "${PREV_ARGS[@]}" \
             "${LABEL_ARGS[@]}" \
             --rootfs /rpm-ostree \
             --output oci-archive:/run/out/chunked.oci
@@ -270,16 +254,17 @@ jobs:
           attempt_delay: 15000
           command: |
             echo "${{ secrets.GITHUB_TOKEN }}" | podman login ghcr.io -u ${{ github.actor }} --password-stdin
+            REF="${{ steps.rechunk.outputs.ref }}"
             for tag in ${{ steps.generate-tags.outputs.alias_tags }}; do
-              skopeo copy ${{ steps.rechunk.outputs.ref }} docker://${{ env.IMAGE_REGISTRY }}/${{ steps.profile.outputs.image_repo }}:$tag
+              podman push "${REF#containers-storage:}" docker://${{ env.IMAGE_REGISTRY }}/${{ steps.profile.outputs.image_repo }}:$tag
             done
 
       - name: Get Image Digest
         id: digest
         if: github.event_name != 'pull_request' && github.ref_name == 'main'
         run: |
-          # Get digest for signing
-          DIGEST=$(skopeo inspect --format '{{.Digest}}' ${{ steps.rechunk.outputs.ref }})
+          DIGEST=$(skopeo inspect --format '{{.Digest}}' \
+            docker://${{ env.IMAGE_REGISTRY }}/${{ steps.profile.outputs.image_repo }}:${{ steps.generate-version.outputs.tag }})
           echo "Digest is: $DIGEST"
           echo "digest=${DIGEST}" >> $GITHUB_OUTPUT
 
