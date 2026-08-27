@@ -164,6 +164,23 @@ jobs:
             --entrypoint /usr/bin/rpm localhost/raw-img \
             -q --qf '%{VERSION}-%{RELEASE}.%{ARCH}' kernel-core)
 
+          # changelog.py diffs this against the previous image's copy to build
+          # the release package tables. Queried from raw-img rather than the
+          # chunked output because rpm-ostree deletes raw-img as it composes.
+          PACKAGES_JSON=$(podman run --rm --pull=never \
+            --entrypoint /usr/bin/rpm localhost/raw-img \
+            -qa --qf '%{NAME}\t%{VERSION}-%{RELEASE}\n' |
+            python3 -c '
+          import json, sys
+          pkgs = {}
+          for line in sys.stdin:
+              name, _, version = line.rstrip("\n").partition("\t")
+              # multilib halves share a name, so the first one wins
+              pkgs.setdefault(name, version)
+          sys.stderr.write("PKG-COUNT: %d\n" % len(pkgs))
+          print(json.dumps(pkgs, sort_keys=True, separators=(",", ":")))
+          ')
+
           LABELS=(
             "io.artifacthub.package.readme-url=https://raw.githubusercontent.com/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}/${{ github.sha }}/README.md"
             "org.opencontainers.image.created=${{ steps.date.outputs.date }}"
@@ -177,6 +194,7 @@ jobs:
             "org.opencontainers.image.vendor=${{ github.repository_owner }}"
             "org.opencontainers.image.version=${{ steps.generate-version.outputs.tag }}"
             "org.universal-blue.pkg.kernel=${KERNEL_VERSION}"
+            "dev.drelbsos.packages=${PACKAGES_JSON}"
             "org.fedoraproject.coreos.ostree.version=${{ steps.generate-version.outputs.tag }}"
             "ostree.bootable=true"
             "ostree.linux=${KERNEL_VERSION}"

@@ -15,6 +15,10 @@ IMAGE_NAME = "drelbsos"
 # from --profile in main() before any get_images()/get_manifests() call.
 PROFILE = "nvidia"
 
+# Package manifest written by the Run Rechunker step of build.yml: a JSON
+# object of package name -> "version-release".
+PACKAGES_LABEL = "dev.drelbsos.packages"
+
 RETRIES = 3
 RETRY_WAIT = 5
 FEDORA_PATTERN = re.compile(r"\.fc\d\d")
@@ -139,9 +143,7 @@ def get_packages(manifests: dict[str, Any]):
     packages = {}
     for img, manifest in manifests.items():
         try:
-            packages[img] = json.loads(manifest["Labels"]["dev.hhd.rechunk.info"])[
-                "packages"
-            ]
+            packages[img] = json.loads(manifest["Labels"][PACKAGES_LABEL])
         except Exception as e:
             print(f"Failed to get packages for {img}:\n{e}")
     return packages
