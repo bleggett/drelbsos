@@ -22,9 +22,7 @@ if [[ ! $(command -v dnf5) ]]; then
 fi
 
 # disable any remaining rpmfusion repos
-sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/rpmfusion*.repo
-
-sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/fedora-cisco-openh264.repo
+dnf5 -y config-manager setopt "*rpmfusion*".enabled=false
 
 # Install MULTILIB packages from negativo17-multimedia prior to disabling repo
 
